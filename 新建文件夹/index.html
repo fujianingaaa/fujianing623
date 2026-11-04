@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>付佳宁｜高级网页设计课堂实践</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            color: #263238;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe, #f5f3ff);
+        }
+
+        header {
+            padding: 70px 20px 90px;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            clip-path: ellipse(90% 70% at 50% 30%);
+        }
+
+        header h1 {
+            margin-bottom: 16px;
+            font-size: clamp(28px, 5vw, 52px);
+        }
+
+        header p {
+            font-size: 18px;
+            opacity: .9;
+        }
+
+        main {
+            width: min(1100px, 92%);
+            margin: -35px auto 40px;
+        }
+
+        .card {
+            margin-bottom: 24px;
+            padding: 28px;
+            border: 1px solid rgba(255,255,255,.7);
+            border-radius: 22px;
+            background: rgba(255,255,255,.85);
+            box-shadow: 0 12px 35px rgba(79, 70, 229, .12);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #4338ca;
+        }
+
+        .catalog {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .item {
+            display: block;
+            padding: 22px;
+            color: #263238;
+            text-decoration: none;
+            border-radius: 16px;
+            background: #f8fafc;
+            transition: .25s;
+        }
+
+        .item:hover {
+            color: white;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            transform: translateY(-5px);
+        }
+
+        .item strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .prompt {
+            line-height: 1.9;
+            color: #475569;
+            white-space: pre-wrap;
+        }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>高级网页设计</h1>
+        <p>付佳宁的课堂实践作品集</p>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>课堂目录</h2>
+
+            <div class="catalog">
+                <a class="item" href="flex复习.html">
+                    <strong>📦 Flex 复习</strong>
+                    <span>Flex 弹性布局基础练习</span>
+                </a>
+
+                <a class="item" href="9.16.html">
+                    <strong>◎ 字体图标</strong>
+                    <span>SVG 图标与标签切换实践</span>
+                </a>
+
+                <a class="item" href="#" onclick="return false;">
+                    <strong>＋ 后续模块</strong>
+                    <span>更多课堂实践内容即将添加</span>
+                </a>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>页面创建提示词</h2>
+            <p class="prompt">创建一个新页面，包括本目录下的所有网页的超链接，使用原生代码，不使用cdn，新页面名称为index.html，主题为付佳宁的《高级网页设计》课堂实践，美化页面，课堂目录中包含flex复习、字体图标、其余模块后续在增加。页面中包括本提示词。</p>
+        </section>
+    </main>
+
+    <footer>
+        © 2026 付佳宁 · 高级网页设计课堂实践
+    </footer>
+</body>
+</html>
