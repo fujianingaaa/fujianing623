@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!--
+    作者：fjn
+    建立时间：2026-11-04
+    使用大模型：Trae
+    功能名称：文学社科图书站点首页，含流行小说/社科历史/文学艺术三个 Tab、主编推荐、订阅榜三栏布局
+    -->
+    <title>文学社科</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 站点整体结构，fjn -->
+    <div class="fjn_wrapper">
+        <!-- 顶部标题条，fjn -->
+        <div class="fjn_header">文学社科</div>
+
+        <!-- 主体三栏区域，fjn -->
+        <div class="fjn_main">
+
+            <!-- 左栏：主编推荐，fjn -->
+            <aside class="fjn_left">
+                <h3 class="fjn_section_title">主编推荐</h3>
+                <div class="fjn_recommend">
+                    <span class="fjn_badge">★力荐</span>
+                    <img class="fjn_rec_cover" src="img/rui.jpg" alt="虚实之间封面">
+                    <p class="fjn_rec_author">芮成钢：《虚实之间》</p>
+                    <p class="fjn_rec_intro">有十年记者生涯对东西方文化的洞悉，又有与奥巴马等政要零距离接触…</p>
+                    <ul class="fjn_rec_list">
+                        <li>兄弟我在义乌的发财史</li>
+                        <li>读佛即是拜佛：唐僧传</li>
+                        <li>二战苏联陆军单兵装备</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- 中栏：Tab + 书籍网格，fjn -->
+            <section class="fjn_center">
+                <ul class="fjn_tabs" id="fjn_tabs">
+                    <li class="fjn_tab fjn_tab_active" data-key="novel">流行小说</li>
+                    <li class="fjn_tab" data-key="history">社科历史</li>
+                    <li class="fjn_tab" data-key="art">文学艺术</li>
+                </ul>
+
+                <div class="fjn_grid" id="fjn_grid">
+                    <!-- 书籍卡片由 JS 按当前 Tab 渲染，fjn -->
+                </div>
+            </section>
+
+            <!-- 右栏：订阅榜，fjn -->
+            <aside class="fjn_right">
+                <div class="fjn_rank_head" id="fjn_rank_head">流行小说订阅榜</div>
+                <ul class="fjn_rank" id="fjn_rank">
+                    <!-- 榜单由 JS 渲染，fjn -->
+                </ul>
+            </aside>
+
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
