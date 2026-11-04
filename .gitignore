@@ -4,3 +4,8 @@
 # 本地编辑器与系统文件
 .vscode/
 Thumbs.db
+
+# 中间产物与解压临时目录
+.trae-html-share-packages/
+_4zip_inspect/
+.git/index.lock
