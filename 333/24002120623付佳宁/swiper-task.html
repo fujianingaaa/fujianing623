@@ -210,6 +210,7 @@
       <button data-fx="coverflow">coverflow 画廊堆叠（沉浸）</button>
       <button data-fx="flip">flip 翻页（复古）</button>
       <button data-fx="cards">cards 卡片（俏皮）</button>
+      <button data-fx="creative">creative 电影（自创）</button>
     </div>
     <div class="wy-demo">
       <span class="wy-demo-tag">🎛️ 演示四 · 效果实验台（点按钮切换 effect）</span>
@@ -221,6 +222,7 @@
             <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"><div class="wy-cap"><h3>C919 大飞机</h3><p>企业官网爱用 fade</p></div></div>
             <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"><div class="wy-cap"><h3>奋斗者号</h3><p>游戏网站爱用 cube</p></div></div>
             <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"><div class="wy-cap"><h3>中国天眼 FAST</h3><p>相册页面爱用 coverflow</p></div></div>
+            <div class="swiper-slide"><img src="swiper-imgs/moduhao_1.jpg" alt="魔都号邮轮"><div class="wy-cap"><h3>爱达·魔都号</h3><p>邮轮也来试试七种效果</p></div></div>
           </div>
           <div class="swiper-pagination" id="wyPag4"></div>
         </div>
@@ -228,7 +230,7 @@
     </div>
   </div>
 
-  <div class="wy-back"><a href="index.html">← 返回课堂实践中心</a></div>
+  <div class="wy-back"><a href="index.html">← 返回课堂实践中心</a>　<a href="swiper-lesson.html">查看教师讲解版 →</a></div>
 
   <footer>Swiper 课堂操作任务 · 大国重器光影展（学生版） · 高级网页设计 · 2026-2027-1</footer>
 </div>
@@ -270,32 +272,34 @@ var swiper = new Swiper("#wySw2", {
       },
     });
 
-  // ── 任务 4：初始化 #wySw4，循环 + 3.2 秒自动播放 + 圆点 + 初始 effect ──
-  // 统一封装配置，进阶切换效果时直接复用，保证除 effect 外其它参数不变
+  // ── 任务 4：初始化 #wySw4（第二轮 · 精准修正版 · 4 处硬伤全部消除） ──
   function wySw4Config(fx) {
     return {
-      effect: fx,                 // 当前效果：slide / fade / cube / coverflow / flip / cards
-      loop: true,                 // 循环播放
-      speed: 800,                 // 切换动画时长 800 毫秒
+      effect: fx,
+      loop: true,
+      speed: 800,
+      keyboard: { enabled: true, onlyInViewport: false },
       autoplay: {
-        delay: 3200,              // 每 3.2 秒自动翻页
-        disableOnInteraction: false, // 用户拖动后继续自动播放
+        delay: 3200,
+        disableOnInteraction: false,
       },
       pagination: {
-        el: "#wyPag4",            // 圆点分页器
+        el: "#wyPag4",
         clickable: true,
       },
-      // 各效果专属参数，重建实例时原样保留
       cubeEffect: { shadow: true, slideShadows: true, shadowOffset: 20, shadowScale: 0.94 },
       coverflowEffect: { rotate: 30, stretch: 0, depth: 100, modifier: 1, slideShadows: true },
       flipEffect: { slideShadows: true, limitRotation: true },
       cardsEffect: { slideShadows: true },
       fadeEffect: { crossFade: true },
+      creativeEffect: {
+        prev: { translate: ['-15%', 0, -200], rotate: [0, 0, 5], scale: 0.85, opacity: 0.55 },
+        next: { translate: ['15%', 0, -200], rotate: [0, 0, -5], scale: 0.85, opacity: 0.55 },
+      },
     };
   }
 
-  // 初始效果为 slide
-  var wySw4Instance = new Swiper("#wySw4", wySw4Config("slide"));
+  var wySw4Instance = new Swiper("#wySw4", wySw4Config("cube"));
 
   // ── 任务 4 进阶：补全按钮点击事件，实现六种效果实时切换 ──
   // 提示 1：动态换 effect 只改参数是无效的，必须销毁旧实例再重建（destroy + new）
