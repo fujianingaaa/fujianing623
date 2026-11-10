@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>付佳宁 · Swiper 课堂三任务合集</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: #f5f7fa; color: #2c3e50; line-height: 1.7; padding: 24px; }
+  .container { max-width: 960px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 32px; }
+  header h1 { font-size: 28px; color: #1a73e8; margin-bottom: 8px; }
+  header p { color: #5f6368; font-size: 14px; }
+  .task { background: #fff; border-radius: 12px; padding: 28px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .task h2 { font-size: 22px; color: #1a73e8; border-left: 4px solid #1a73e8; padding-left: 12px; margin-bottom: 16px; }
+  .task h3 { font-size: 17px; color: #202124; margin: 20px 0 10px; }
+  .task p { margin-bottom: 12px; color: #3c4043; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; color: #fff; margin-right: 6px; }
+  .tag-ok { background: #34a853; }
+  .tag-bad { background: #ea4335; }
+  pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.5; margin: 12px 0; }
+  pre .cm { color: #6a9955; }
+  pre .kw { color: #569cd6; }
+  pre .str { color: #ce9178; }
+  .result-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+  .result-table th, .result-table td { border: 1px solid #e0e0e0; padding: 8px 12px; text-align: left; }
+  .result-table th { background: #f1f3f4; }
+  .demo-box { margin: 16px 0; padding: 16px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e0e0e0; }
+  .swiper { width: 100%; height: 360px; border-radius: 8px; overflow: hidden; }
+  .swiper-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .swiper-pagination { bottom: 10px !important; }
+  .note { background: #e8f0fe; padding: 12px 16px; border-radius: 6px; margin: 12px 0; font-size: 14px; color: #1a73e8; }
+  .keyboard-hint { text-align: center; color: #5f6368; font-size: 13px; margin-top: 8px; }
+  footer { text-align: center; color: #80868b; font-size: 13px; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>付佳宁 · Swiper 课堂三任务合集</h1>
+    <p>任务一：提示词工程师 ｜ 任务二：creative 仿写 ｜ 任务三：魔都号 + keyboard 综合创作</p>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       任务一：提示词工程师
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="task">
+    <h2>任务一 · 提示词工程师（两轮迭代）</h2>
+    <p><strong>目标：</strong>写提示词让 AI 生成 <code>new Swiper('#wySw4', {...})</code> 配置，满足 4 条硬性要求：① 无缝循环 ② 3.2 秒自动翻页且手动操作后不停止 ③ 圆点分页器可点击 ④ 初始效果 cube。</p>
+
+    <h3>第一轮 · 朴素提示词（笼统版）</h3>
+    <p><em>"帮我写一个 Swiper 配置，DOM 选择器是 #wySw4，需求：循环播放、自动播放每 3.2 秒、有圆点分页器、初始效果 cube。"</em></p>
+    <p>AI 第一轮回答（有 <span class="tag tag-bad">4 处硬伤</span>）：</p>
+<pre><span class="cm">// 第一轮 · AI 朴素回答</span>
+<span class="kw">new</span> Swiper(<span class="str">"#wySw4"</span>, {
+  effect: <span class="str">"cube"</span>,
+  loop: <span class="str">"true"</span>,                    <span class="cm">// ❌ Bug1：字符串不是布尔值 → 不循环</span>
+  speed: 800,
+  autoplay: { delay: 3200 },           <span class="cm">// ❌ Bug2：漏 disableOnInteraction → 拖后停</span>
+  pagination: { el: <span class="str">"#wyPagination"</span> },  <span class="cm">// ❌ Bug3：id 写错 → 分页器消失</span>
+                                       <span class="cm">// ❌ Bug4：漏 cubeEffect → cube 无阴影</span>
+});</pre>
+
+    <h3>第二轮 · 精准提示词（带约束版）</h3>
+    <p><em>"修正上一轮的 4 个硬伤：① loop 必须是布尔值 true（不是字符串）；② autoplay 必须同时写 delay:3200 和 disableOnInteraction:false；③ pagination.el 写 '#wyPag4'（HTML 里的实际 id）并加 clickable:true；④ 补 cubeEffect 阴影参数。"</em></p>
+    <p>AI 第二轮回答（<span class="tag tag-ok">4 处全部修正</span>）：</p>
+<pre><span class="cm">// 第二轮 · 精准修正版</span>
+<span class="kw">function</span> wySw4Config(fx) {
+  <span class="kw">return</span> {
+    effect: fx,
+    loop: <span class="kw">true</span>,                                       <span class="cm">// ✅ 布尔值</span>
+    speed: 800,
+    autoplay: {
+      delay: 3200,
+      disableOnInteraction: <span class="kw">false</span>,                    <span class="cm">// ✅ 拖后不停</span>
+    },
+    pagination: {
+      el: <span class="str">"#wyPag4"</span>,
+      clickable: <span class="kw">true</span>,                              <span class="cm">// ✅ 圆点可点</span>
+    },
+    cubeEffect: { shadow: <span class="kw">true</span>, slideShadows: <span class="kw">true</span>, shadowOffset: 20, shadowScale: 0.94 }, <span class="cm">// ✅ 立体阴影</span>
+  };
+}
+<span class="kw">var</span> wySw4Instance = <span class="kw">new</span> Swiper(<span class="str">"#wySw4"</span>, wySw4Config(<span class="str">"cube"</span>));</pre>
+
+    <h3>验证结果</h3>
+    <table class="result-table">
+      <tr><th>检查项</th><th>第一轮</th><th>第二轮</th></tr>
+      <tr><td>① 无缝循环</td><td><span class="tag tag-bad">FAIL</span> loop="true" 字符串</td><td><span class="tag tag-ok">PASS</span> loop=true 布尔</td></tr>
+      <tr><td>② 3.2s + 拖后不停</td><td><span class="tag tag-bad">FAIL</span> 拖后 autoplay 停</td><td><span class="tag tag-ok">PASS</span> disableOnInteraction=false</td></tr>
+      <tr><td>③ 圆点可点击</td><td><span class="tag tag-bad">FAIL</span> id 写错消失</td><td><span class="tag tag-ok">PASS</span> el=#wyPag4 + clickable</td></tr>
+      <tr><td>④ cube 立体</td><td><span class="tag tag-bad">FAIL</span> 无阴影</td><td><span class="tag tag-ok">PASS</span> cubeEffect 阴影生效</td></tr>
+    </table>
+    <div class="note">💡 心得：提示词的精度 = 结果的精度。第一轮只说"要什么"，AI 凭习惯瞎猜；第二轮把每条都拆成具体的布尔值/数字/字符串，AI 照着填就对了。</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       任务二：creative 仿写
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="task">
+    <h2>任务二 · creative 仿写（胶片影墙）</h2>
+    <p><strong>目标：</strong>课堂没讲过的 creative effect，读 Swiper 官方 <code>CreativeEffectTransform</code> 类型定义，仿写第 7 个效果。效果：上一张缩小左移带角度、下一张缩小右移带角度，像电影胶片条。</p>
+
+    <h3>核心配置</h3>
+<pre>creativeEffect: {
+  prev: {
+    translate: [<span class="str">'-15%'</span>, 0, -200],   <span class="cm">// 左移 15%，Z 轴后退 200px（景深）</span>
+    rotate: [0, 0, 5],                <span class="cm">// 顺时针转 5°（胶片倾斜）</span>
+    scale: 0.85,
+    opacity: 0.55,
+  },
+  next: {
+    translate: [<span class="str">'15%'</span>, 0, -200],    <span class="cm">// 右移 15%，Z 轴后退</span>
+    rotate: [0, 0, -5],               <span class="cm">// 逆时针转 5°（对称）</span>
+    scale: 0.85,
+    opacity: 0.55,
+  },
+}</pre>
+    <p><code>translate: [x, y, z]</code> 三轴位移，<code>rotate: [x, y, z]</code> 三轴角度。胶片风格主要用 Z 轴旋转和 X/Z 位移。</p>
+
+    <h3>实时演示（点击下方切换上一张/下一张）</h3>
+    <div class="demo-box">
+      <div class="swiper" id="creativeSwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide"><img src="swiper-imgs/tiangong_1.jpg" alt="天宫"></div>
+          <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="复兴号"></div>
+          <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919"></div>
+          <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者"></div>
+          <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="天眼"></div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       任务三：综合创作 + keyboard
+  ═══════════════════════════════════════════════════════════ -->
+  <section class="task">
+    <h2>任务三 · 综合创作 — 魔都号 + keyboard</h2>
+    <p><strong>展品：</strong>魔都号邮轮（2024 年 1 月首航，中国首艘国产大型邮轮），横版 16:9。</p>
+    <p><strong>新能力：</strong>从课堂没讲过的 keyboard / mousewheel / zoom / parallax 中自选，我选了 <strong>keyboard</strong>——一行配置，演示直观，对所有 effect 生效。</p>
+
+    <h3>核心代码</h3>
+<pre><span class="cm">// 任务三新增：键盘左右键控制翻页</span>
+keyboard: { enabled: <span class="kw">true</span>, onlyInViewport: <span class="kw">false</span> },
+<span class="cm">// onlyInViewport:false = 不需要 swiper 滚到可视区也能响应键盘</span></pre>
+
+    <h3>实时演示（按键盘 ← → 翻页，共 6 张含魔都号）</h3>
+    <div class="demo-box">
+      <div class="swiper" id="moduhaoSwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide"><img src="swiper-imgs/tiangong_1.jpg" alt="天宫空间站"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#fff;padding:8px 16px;">天宫空间站</div></div>
+          <div class="swiper-slide"><img src="swiper-imgs/fuxing_1.jpg" alt="复兴号"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#fff;padding:8px 16px;">复兴号动车组</div></div>
+          <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#fff;padding:8px 16px;">C919 大飞机</div></div>
+          <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#fff;padding:8px 16px;">奋斗者号</div></div>
+          <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="天眼"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#fff;padding:8px 16px;">中国天眼 FAST</div></div>
+          <div class="swiper-slide"><img src="swiper-imgs/moduhao_1.jpg" alt="魔都号"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#fff;padding:8px 16px;">魔都号邮轮 · 2024.1 首航</div></div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+      <p class="keyboard-hint">⌨️ 按键盘 ← → 键翻页</p>
+    </div>
+
+    <h3>答辩四连问速答</h3>
+    <table class="result-table">
+      <tr><th>问题</th><th>答案</th></tr>
+      <tr><td>keyboard 代码什么意思？</td><td>enabled:true 开启键盘；onlyInViewport:false 表示不滚到可视区也能响应</td></tr>
+      <tr><td>AI 第一次错在哪？</td><td>写成 keyboard:true（布尔值），Swiper 要求是对象 {enabled:true}；且没提 onlyInViewport</td></tr>
+      <tr><td>改了什么新参数？</td><td>onlyInViewport 从默认 true 改为 false，避免页面没滚到时键盘无效</td></tr>
+      <tr><td>delay 改成指定值？</td><td>改 autoplay.delay 字段即可，delay 是翻页间隔，speed 才是动画时长，两者独立</td></tr>
+    </table>
+  </section>
+
+  <footer>
+    <p>付佳宁 24002120623 · Swiper 课堂三任务 · 2026.11</p>
+    <p><a href="swiper-task.html" style="color:#1a73e8;">← 返回 swiper-task.html（任务 1-4）</a></p>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  // 任务二演示：creative 胶片效果
+  var creativeSwiper = new Swiper("#creativeSwiper", {
+    effect: "creative",
+    loop: true,
+    speed: 800,
+    autoplay: { delay: 3200, disableOnInteraction: false },
+    pagination: { el: ".swiper-pagination", clickable: true },
+    creativeEffect: {
+      prev: { translate: ['-15%', 0, -200], rotate: [0, 0, 5], scale: 0.85, opacity: 0.55 },
+      next: { translate: ['15%', 0, -200], rotate: [0, 0, -5], scale: 0.85, opacity: 0.55 },
+    },
+  });
+
+  // 任务三演示：6 张 slide + keyboard
+  var moduhaoSwiper = new Swiper("#moduhaoSwiper", {
+    effect: "cube",
+    loop: true,
+    speed: 800,
+    keyboard: { enabled: true, onlyInViewport: false },
+    autoplay: { delay: 3200, disableOnInteraction: false },
+    pagination: { el: "#moduhaoSwiper .swiper-pagination", clickable: true },
+    cubeEffect: { shadow: true, slideShadows: true, shadowOffset: 20, shadowScale: 0.94 },
+  });
+</script>
+</body>
+</html>

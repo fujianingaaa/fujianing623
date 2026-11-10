@@ -210,7 +210,6 @@
       <button data-fx="coverflow">coverflow 画廊堆叠（沉浸）</button>
       <button data-fx="flip">flip 翻页（复古）</button>
       <button data-fx="cards">cards 卡片（俏皮）</button>
-      <button data-fx="creative">creative 影墙（胶片·学生自学）</button>
     </div>
     <div class="wy-demo">
       <span class="wy-demo-tag">🎛️ 演示四 · 效果实验台（点按钮切换 effect）</span>
@@ -222,7 +221,6 @@
             <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"><div class="wy-cap"><h3>C919 大飞机</h3><p>企业官网爱用 fade</p></div></div>
             <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"><div class="wy-cap"><h3>奋斗者号</h3><p>游戏网站爱用 cube</p></div></div>
             <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"><div class="wy-cap"><h3>中国天眼 FAST</h3><p>相册页面爱用 coverflow</p></div></div>
-            <div class="swiper-slide"><img src="swiper-imgs/moduhao_1.jpg" alt="魔都号邮轮"><div class="wy-cap"><h3>魔都号邮轮</h3><p>任务三展品 · 2024.1 首航 · 键盘 ← → 也能翻页</p></div></div>
           </div>
           <div class="swiper-pagination" id="wyPag4"></div>
         </div>
@@ -275,12 +273,9 @@ var swiper = new Swiper("#wySw2", {
   // ── 任务 4：初始化 #wySw4（第二轮 · 精准修正版 · 4 处硬伤全部消除） ──
   function wySw4Config(fx) {
     return {
-      effect: fx,                                           // ✅ 效果名：cube / fade / slide / coverflow / flip / cards / creative
+      effect: fx,                                           // ✅ 效果名：cube / fade / slide / coverflow / flip / cards
       loop: true,                                           // ✅ 修正 1：布尔值 true 才是循环（不是字符串 "true"）
       speed: 800,
-      // 🆕 任务三：课堂没讲过的新能力 —— keyboard 键盘左右键控制翻页
-      // 老师按 ← → 就能切换上一张/下一张，答辩好讲
-      keyboard: { enabled: true, onlyInViewport: false },
       autoplay: {
         delay: 3200,                                        // ✅ 每 3.2 秒自动翻页
         disableOnInteraction: false,                         // ✅ 修正 2：用户拖一下后 autoplay 继续跑（Swiper 默认 true 会停）
@@ -295,22 +290,6 @@ var swiper = new Swiper("#wySw2", {
       flipEffect: { slideShadows: true, limitRotation: true },
       cardsEffect: { slideShadows: true },
       fadeEffect: { crossFade: true },
-      // 🆕 任务二：creative 影墙 effect —— 胶片风格
-      // 上一张缩小左移带角度、下一张缩小右移带角度，中间 active 保持 100% 大小
-      creativeEffect: {
-        prev: {
-          translate: ['-15%', 0, -200],   // 左移 15%，Z 轴后退 200px（形成景深）
-          rotate: [0, 0, 5],              // 顺时针转 5°（轻微倾斜）
-          scale: 0.85,                     // 缩小到 85%
-          opacity: 0.55,                   // 半透明
-        },
-        next: {
-          translate: ['15%', 0, -200],    // 右移 15%，Z 轴后退
-          rotate: [0, 0, -5],             // 逆时针转 5°
-          scale: 0.85,
-          opacity: 0.55,
-        },
-      },
     };
   }
 
