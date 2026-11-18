@@ -341,6 +341,30 @@
   .wy_tips li::before { content: "·"; position: absolute; left: 1px; color: #64748b; }
 
   .wy_foot { margin-top: 28px; text-align: center; font-size: 12px; color: #5f6d84; line-height: 2; }
+  /* wy_ 录屏演示视频 */
+  .wy_videoWrap {
+    margin-top: 22px;
+    padding: 16px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(255, 255, 255, .1);
+  }
+  .wy_videoTag {
+    display: inline-block;
+    font-size: 12.5px;
+    color: #ffd166;
+    background: rgba(255, 209, 102, .1);
+    border: 1px solid rgba(255, 209, 102, .28);
+    border-radius: 999px;
+    padding: 4px 12px;
+    margin-bottom: 12px;
+  }
+  .wy_video {
+    width: 100%;
+    display: block;
+    border-radius: 12px;
+    background: #000;
+  }
 </style>
 </head>
 <body>
@@ -423,6 +447,14 @@
         <li>旋转屏幕或窗口 resize 后重新收敛边界，缩放状态不丢失</li>
       </ul>
     </div>
+
+    <div class="wy_videoWrap">
+      <span class="wy_videoTag">🎬 录屏演示 · 图片查看器（双击放大 / 拖动平移 / 双指缩放）</span>
+      <video class="wy_video" controls playsinline preload="metadata">
+        <source src="videos/task3-zoom.mp4" type="video/mp4">
+        你的浏览器不支持 HTML5 视频，可<a href="videos/task3-zoom.mp4">点此下载观看</a>。
+      </video>
+    </div>
   </section>
 
   <!-- ================= 任务四 ================= -->
@@ -450,6 +482,14 @@
       <p>② iOS 限制：iOS 13 以后体感权限必须由用户点击触发申请，被拒绝时传感器完全不可用。</p>
       <p>③ 只依赖传感器，不支持的设备上只会看到空白或报错，功能等于没有。</p>
       <p>④ 因此保留「点我抽一次」按钮：传感器只是增强体验，抽菜谱这个核心功能在任何设备上都能用。</p>
+    </div>
+
+    <div class="wy_videoWrap">
+      <span class="wy_videoTag">🎬 录屏演示 · 摇一摇抽菜谱</span>
+      <video class="wy_video" controls playsinline preload="metadata">
+        <source src="videos/task4-sensor.mp4" type="video/mp4">
+        你的浏览器不支持 HTML5 视频，可<a href="videos/task4-sensor.mp4">点此下载观看</a>。
+      </video>
     </div>
   </section>
 
