@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 移动端交互三任务 · 手势卡片 / 图片查看器 / 摇一摇 · 付佳宁 24002120623 -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>移动端交互三任务 · 付佳宁</title>
+<style>
+  /* ================= 通用外壳 ================= */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    min-height: 100vh;
+    padding: 24px 14px 54px;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #e9eefb;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(37, 99, 235, .18) 0%, transparent 42%),
+      radial-gradient(circle at 85% 62%, rgba(16, 185, 129, .1) 0%, transparent 42%),
+      #080b12;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  .wy_shell { width: 100%; max-width: 460px; margin: 0 auto; }
+
+  .wy_hero { text-align: center; margin-bottom: 18px; }
+  .wy_hero h1 { font-size: 22px; font-weight: 700; letter-spacing: 1.5px; }
+  .wy_hero p { margin-top: 8px; font-size: 12.5px; color: #7d8ba6; letter-spacing: .4px; }
+
+  .wy_nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 26px; }
+  .wy_nav a {
+    padding: 7px 15px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    background: rgba(255, 255, 255, .05);
+    color: #cbd5e1;
+    font-size: 12.5px;
+    text-decoration: none;
+  }
+
+  .wy_sec {
+    margin-bottom: 24px;
+    padding: 20px 18px 26px;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: rgba(255, 255, 255, .035);
+    scroll-margin-top: 18px;
+  }
+
+  .wy_badgeNo {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(147, 230, 196, .26);
+    background: rgba(147, 230, 196, .12);
+    color: #93e6c4;
+    font-size: 11.5px;
+    letter-spacing: 1px;
+  }
+  .wy_secHead h2 { margin-top: 11px; font-size: 17px; font-weight: 600; letter-spacing: .5px; }
+  .wy_secHead p { margin-top: 7px; font-size: 12.5px; line-height: 1.85; color: #8494ab; }
+
+  /* ================= 任务二 · 手势卡片（wy_g_） ================= */
+  .wy_g_stage {
+    position: relative;
+    width: 100%;
+    max-width: 330px;
+    height: 396px;
+    margin: 20px auto 0;
+    touch-action: pan-y;   /* 只接管横向手势，纵向仍可滚动页面 */
+  }
+
+  .wy_g_card {
+    position: absolute;
+    inset: 0;
+    padding: 28px 24px 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    border-radius: 24px;
+    background: linear-gradient(145deg, #f43f5e 0%, #c2410c 100%);
+    box-shadow: 0 22px 48px rgba(0, 0, 0, .52), inset 0 1px 0 rgba(255, 255, 255, .22);
+    will-change: transform, opacity;
+  }
+  .wy_g_card::after {
+    content: "";
+    position: absolute;
+    top: -56px;
+    right: -46px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .15);
+    filter: blur(6px);
+    pointer-events: none;
+  }
+  .wy_g_no {
+    position: absolute;
+    top: 16px;
+    right: 22px;
+    font-size: 50px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -3px;
+    color: rgba(255, 255, 255, .18);
+  }
+  .wy_g_emoji {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 86px;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .34));
+  }
+  .wy_g_tag {
+    align-self: flex-start;
+    padding: 4px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .34);
+    background: rgba(255, 255, 255, .18);
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .wy_g_name { margin-top: 12px; font-size: 25px; font-weight: 700; letter-spacing: 1px; }
+  .wy_g_desc { margin-top: 8px; font-size: 13px; line-height: 1.75; color: rgba(255, 255, 255, .88); }
+
+  .wy_g_footer { margin-top: 20px; text-align: center; }
+  .wy_g_page { font-size: 13.5px; letter-spacing: 1.5px; color: #c3cee2; }
+  .wy_g_dots { display: flex; justify-content: center; gap: 8px; margin-top: 13px; }
+  .wy_g_dot { width: 7px; height: 7px; border-radius: 50%; background: #3a485f; transition: width .25s, background .25s; }
+  .wy_g_dot.wy_g_on { width: 22px; border-radius: 4px; background: #fbbf24; }
+
+  .wy_g_toast {
+    position: fixed;
+    left: 50%;
+    bottom: 96px;
+    transform: translate(-50%, 12px);
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .14);
+    background: rgba(16, 22, 34, .95);
+    color: #f1f5f9;
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s, transform .25s;
+    z-index: 30;
+  }
+  .wy_g_toast.wy_g_show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ================= 任务三 · 图片查看器（wy_z_） ================= */
+  .wy_z_notice {
+    margin: 18px 0 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(251, 191, 36, .28);
+    background: rgba(251, 191, 36, .08);
+    color: #fcd34d;
+    font-size: 12px;
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  .wy_z_stage {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    height: 400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background:
+      linear-gradient(rgba(255, 255, 255, .03), rgba(255, 255, 255, .03)),
+      repeating-conic-gradient(#121a27 0% 25%, #0e1520 0% 50%) 50% / 22px 22px;
+    box-shadow: 0 20px 44px rgba(0, 0, 0, .48);
+  }
+
+  .wy_z_img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    transform-origin: center center;
+    will-change: transform;
+    border-radius: 10px;
+    touch-action: none;
+    -webkit-user-drag: none;
+  }
+
+  .wy_z_badge {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    min-width: 52px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .16);
+    background: rgba(8, 12, 20, .8);
+    color: #93e6c4;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .wy_z_reset {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .16);
+    background: rgba(8, 12, 20, .8);
+    color: #cbd5e1;
+    font-family: inherit;
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  .wy_z_reset:active { background: rgba(255, 255, 255, .14); }
+
+  .wy_z_bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+  .wy_z_chip {
+    padding: 6px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: rgba(255, 255, 255, .05);
+    color: #9aa9c0;
+    font-size: 11.5px;
+  }
+
+  /* ================= 任务四 · 摇一摇（wy_s_） ================= */
+  .wy_s_phone {
+    margin: 20px auto 2px;
+    font-size: 52px;
+    line-height: 1;
+    text-align: center;
+    filter: drop-shadow(0 10px 22px rgba(251, 146, 60, .32));
+  }
+  @keyframes wy_s_shake {
+    0%, 100% { transform: rotate(0deg) translateX(0); }
+    15% { transform: rotate(-16deg) translateX(-4px); }
+    35% { transform: rotate(14deg) translateX(4px); }
+    55% { transform: rotate(-10deg) translateX(-3px); }
+    75% { transform: rotate(8deg) translateX(2px); }
+  }
+  .wy_s_shaking { animation: wy_s_shake .6s ease-in-out; }
+
+  .wy_s_status {
+    margin: 10px 0 18px;
+    min-height: 20px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #fbbf24;
+    letter-spacing: .3px;
+  }
+  .wy_s_status.wy_s_warn { color: #fb7185; }
+
+  .wy_s_card {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    padding: 30px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: linear-gradient(160deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .03));
+    box-shadow: 0 20px 44px rgba(0, 0, 0, .48), inset 0 1px 0 rgba(255, 255, 255, .12);
+  }
+  @keyframes wy_s_pop {
+    0% { transform: scale(.86) translateY(12px); opacity: .15; }
+    62% { transform: scale(1.045) translateY(-5px); opacity: 1; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .wy_s_pop { animation: wy_s_pop .45s cubic-bezier(.34, 1.56, .64, 1); }
+
+  .wy_s_emoji { font-size: 58px; line-height: 1; }
+  .wy_s_name { margin-top: 15px; font-size: 24px; font-weight: 700; letter-spacing: 1px; }
+  .wy_s_desc { margin-top: 9px; font-size: 12.5px; line-height: 1.8; color: #9aa8bd; }
+
+  .wy_s_btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 14px 34px;
+    border: none;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 14.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #1a0f05;
+    background: linear-gradient(135deg, #fbbf24, #f97316);
+    box-shadow: 0 12px 26px rgba(249, 115, 22, .34);
+    cursor: pointer;
+    transition: transform .15s;
+  }
+  .wy_s_btn:active { transform: scale(.96); }
+
+  .wy_s_note {
+    margin-top: 22px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: rgba(255, 255, 255, .04);
+  }
+  .wy_s_note h3 { font-size: 13px; color: #fbbf24; letter-spacing: 1px; margin-bottom: 10px; }
+  .wy_s_note p { font-size: 12.5px; line-height: 1.95; color: #93a2b9; }
+  .wy_s_note p + p { margin-top: 7px; }
+
+  /* ================= 说明区 ================= */
+  .wy_tips {
+    margin-top: 14px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    border: 1px dashed rgba(255, 255, 255, .12);
+  }
+  .wy_tips h3 { font-size: 12.5px; color: #93e6c4; letter-spacing: 1px; margin-bottom: 9px; }
+  .wy_tips li {
+    list-style: none;
+    position: relative;
+    padding-left: 13px;
+    font-size: 12px;
+    line-height: 1.95;
+    color: #8b9ab1;
+  }
+  .wy_tips li::before { content: "·"; position: absolute; left: 1px; color: #64748b; }
+
+  .wy_foot { margin-top: 28px; text-align: center; font-size: 12px; color: #5f6d84; line-height: 2; }
+</style>
+</head>
+<body>
+
+<div class="wy_shell">
+
+  <header class="wy_hero">
+    <h1>移动端交互三任务</h1>
+    <p>手势识别 · 多指手势 · 设备传感器 · 付佳宁 24002120623</p>
+  </header>
+
+  <nav class="wy_nav">
+    <a href="#wy_taskGesture">任务二 · 手势卡片</a>
+    <a href="#wy_taskZoom">任务三 · 图片查看器</a>
+    <a href="#wy_taskSensor">任务四 · 摇一摇</a>
+  </nav>
+
+  <!-- ================= 任务二 ================= -->
+  <section class="wy_sec" id="wy_taskGesture">
+    <div class="wy_secHead">
+      <span class="wy_badgeNo">任务二 · ⭐⭐</span>
+      <h2>手势卡片：左右滑动切换内容</h2>
+      <p>4 道中华美食，左滑下一张、右滑上一张，横向位移不足 40px 不切换，边界给出提示。</p>
+    </div>
+
+    <div class="wy_g_stage" id="wy_g_stage">
+      <article class="wy_g_card" id="wy_g_card">
+        <span class="wy_g_no" id="wy_g_no">01</span>
+        <div class="wy_g_emoji" id="wy_g_emoji">🌶️</div>
+        <span class="wy_g_tag" id="wy_g_tag">川菜</span>
+        <h3 class="wy_g_name" id="wy_g_name">麻婆豆腐</h3>
+        <p class="wy_g_desc" id="wy_g_desc">麻辣鲜香烫，一勺红油裹着嫩豆腐，川菜馆里永恒的招牌。</p>
+      </article>
+    </div>
+
+    <div class="wy_g_footer">
+      <div class="wy_g_page" id="wy_g_page">第 1 / 4 张</div>
+      <div class="wy_g_dots" id="wy_g_dots"></div>
+    </div>
+
+    <div class="wy_tips">
+      <h3>验收点</h3>
+      <ul>
+        <li>短距离误触不切换：阈值 40px，横向位移不够直接返回</li>
+        <li>快速连续滑动不跳两张：wy_cooling 冷却锁，一次切换完成前忽略后续手势</li>
+        <li>手机拖动时页面不跟着上下滚：容器 touch-action: pan-y，只放行纵向滚动</li>
+        <li>切换带 0.3s 过渡；桌面可按住鼠标左右拖动演示</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= 任务三 ================= -->
+  <section class="wy_sec" id="wy_taskZoom">
+    <div class="wy_secHead">
+      <span class="wy_badgeNo">任务三 · ⭐⭐⭐</span>
+      <h2>图片查看器：双指缩放 + 双击放大 + 拖动</h2>
+      <p>以两指中心为缩放基准，1~4 倍缩放，放大后单指拖动，双击在 1× / 2× 之间切换。</p>
+    </div>
+
+    <div class="wy_z_notice">双指缩放请用手机打开（桌面可用鼠标双击放大、按住拖动）</div>
+
+    <div class="wy_z_stage" id="wy_z_stage">
+      <img class="wy_z_img" id="wy_z_img" src="mobile-imgs/food-zoom.jpg" alt="小笼包特写">
+      <span class="wy_z_badge" id="wy_z_badge">1.0×</span>
+      <button class="wy_z_reset" id="wy_z_reset" type="button">重置 1×</button>
+    </div>
+
+    <div class="wy_z_bar">
+      <span class="wy_z_chip">双指开合 → 1~4 倍</span>
+      <span class="wy_z_chip">单指拖动 → 看细节</span>
+      <span class="wy_z_chip">双击 → 1× / 2×</span>
+    </div>
+
+    <div class="wy_tips">
+      <h3>缩放为什么不会“跳”</h3>
+      <ul>
+        <li>每次移动都以 touchstart 记录的「初始两指中点 + 初始缩放比」重新计算，不做增量累加</li>
+        <li>平移量按 t' = m − (m − t) × (s'/s) 推导，指下那一点始终不动</li>
+        <li>双指变单指、单指变双指时立刻重置基准，手指数量变化不会突跳</li>
+        <li>拖动越界有阻尼（只跟 35%），松手回弹到边界；1× 时不允许拖出</li>
+        <li>旋转屏幕或窗口 resize 后重新收敛边界，缩放状态不丢失</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= 任务四 ================= -->
+  <section class="wy_sec" id="wy_taskSensor">
+    <div class="wy_secHead">
+      <span class="wy_badgeNo">任务四 · ⭐⭐</span>
+      <h2>摇一摇彩蛋：抽出今日菜谱</h2>
+      <p>监听 devicemotion，合成加速度超过 18 判定摇动，触发后进入 1.5 秒冷却。</p>
+    </div>
+
+    <div class="wy_s_phone" id="wy_s_phone">📱</div>
+    <p class="wy_s_status" id="wy_s_status">正在检测设备传感器…</p>
+
+    <div class="wy_s_card" id="wy_s_card">
+      <span class="wy_s_emoji" id="wy_s_emoji">🍽️</span>
+      <h3 class="wy_s_name" id="wy_s_name">今日菜谱</h3>
+      <p class="wy_s_desc" id="wy_s_desc">摇一摇手机，看看今天吃什么</p>
+    </div>
+
+    <button class="wy_s_btn" id="wy_s_btn" type="button">点我抽一次</button>
+
+    <div class="wy_s_note">
+      <h3>为什么必须做降级？</h3>
+      <p>① 设备差异大：桌面浏览器、部分安卓机和旧浏览器根本没有 devicemotion 事件，或者有事件却拿不到数据。</p>
+      <p>② iOS 限制：iOS 13 以后体感权限必须由用户点击触发申请，被拒绝时传感器完全不可用。</p>
+      <p>③ 只依赖传感器，不支持的设备上只会看到空白或报错，功能等于没有。</p>
+      <p>④ 因此保留「点我抽一次」按钮：传感器只是增强体验，抽菜谱这个核心功能在任何设备上都能用。</p>
+    </div>
+  </section>
+
+  <p class="wy_foot">付佳宁 · 24002120623<br>移动端页面建议在手机或浏览器设备模式下查看</p>
+
+</div>
+
+<div class="wy_g_toast" id="wy_g_toast"></div>
+
+<script>
+/* ==================== 任务二 · 手势卡片 ==================== */
+(function () {
+  // wy_ 四道菜数据
+  var wy_dishes = [
+    { name: '麻婆豆腐', desc: '麻辣鲜香烫，一勺红油裹着嫩豆腐，川菜馆里永恒的招牌。', tag: '川菜', emoji: '🌶️', from: '#f43f5e', to: '#c2410c' },
+    { name: '东坡肉', desc: '慢火煨足三个小时，肥而不腻、酥而不碎，入口即化。', tag: '浙菜', emoji: '🥩', from: '#b45309', to: '#7c2d12' },
+    { name: '西湖醋鱼', desc: '酸甜适口、鱼肉细嫩，出锅浇一层琥珀色的糖醋汁。', tag: '浙菜', emoji: '🐟', from: '#0891b2', to: '#0f766e' },
+    { name: '北京烤鸭', desc: '皮酥肉嫩、色泽枣红，片好后卷上荷叶饼配甜面酱。', tag: '京菜', emoji: '🦆', from: '#b91c1c', to: '#7f1d1d' }
+  ];
+
+  var wy_index = 0;
+  var wy_startX = 0;
+  var wy_startY = 0;
+  var wy_cooling = false;      // wy_ 冷却锁，防止快速连滑一次跳两张
+  var wy_threshold = 40;       // wy_ 横向位移阈值（px）
+  var wy_toastTimer = null;
+  var wy_lastTouchTime = 0;    // wy_ 用于忽略触摸后模拟的鼠标事件
+  var wy_mouseDown = false;    // wy_ 桌面鼠标拖动状态
+
+  var wy_stage = document.getElementById('wy_g_stage');
+  var wy_card = document.getElementById('wy_g_card');
+  var wy_no = document.getElementById('wy_g_no');
+  var wy_emoji = document.getElementById('wy_g_emoji');
+  var wy_tag = document.getElementById('wy_g_tag');
+  var wy_name = document.getElementById('wy_g_name');
+  var wy_desc = document.getElementById('wy_g_desc');
+  var wy_page = document.getElementById('wy_g_page');
+  var wy_dots = document.getElementById('wy_g_dots');
+  var wy_toastEl = document.getElementById('wy_g_toast');
+
+  // wy_ 渲染当前卡片
+  function wy_render() {
+    var wy_d = wy_dishes[wy_index];
+
+    wy_card.style.background = 'linear-gradient(145deg, ' + wy_d.from + ' 0%, ' + wy_d.to + ' 100%)';
+    wy_no.textContent = wy_index + 1 < 10 ? '0' + (wy_index + 1) : '' + (wy_index + 1);
+    wy_emoji.textContent = wy_d.emoji;
+    wy_tag.textContent = wy_d.tag;
+    wy_name.textContent = wy_d.name;
+    wy_desc.textContent = wy_d.desc;
+    wy_page.textContent = '第 ' + (wy_index + 1) + ' / ' + wy_dishes.length + ' 张';
+
+    wy_dots.innerHTML = '';
+    for (var wy_i = 0; wy_i < wy_dishes.length; wy_i++) {
+      var wy_dot = document.createElement('span');
+      wy_dot.className = 'wy_g_dot' + (wy_i === wy_index ? ' wy_g_on' : '');
+      wy_dots.appendChild(wy_dot);
+    }
+  }
+
+  // wy_ 轻提示
+  function wy_toast(wy_text) {
+    wy_toastEl.textContent = wy_text;
+    wy_toastEl.classList.add('wy_g_show');
+    clearTimeout(wy_toastTimer);
+    wy_toastTimer = setTimeout(function () {
+      wy_toastEl.classList.remove('wy_g_show');
+    }, 1500);
+  }
+
+  // wy_ 切换卡片：1 下一张，-1 上一张
+  function wy_switch(wy_dir) {
+    if (wy_cooling) return;
+
+    var wy_next = wy_index + wy_dir;
+    if (wy_next < 0) { wy_toast('已经是第一张了'); return; }
+    if (wy_next >= wy_dishes.length) { wy_toast('已经是最后一张了'); return; }
+
+    wy_cooling = true;
+
+    // wy_ 第一步：当前卡片带 0.3s 过渡滑出
+    wy_card.style.transition = 'transform .3s cubic-bezier(.4, 0, .2, 1), opacity .3s';
+    wy_card.style.transform = 'translateX(' + (-wy_dir * 68) + '%) rotate(' + (-wy_dir * 7) + 'deg)';
+    wy_card.style.opacity = '0';
+
+    setTimeout(function () {
+      wy_index = wy_next;
+      wy_render();
+
+      // wy_ 第二步：换数据后瞬移到反方向起点
+      wy_card.style.transition = 'none';
+      wy_card.style.transform = 'translateX(' + (wy_dir * 68) + '%) rotate(' + (wy_dir * 7) + 'deg)';
+      wy_card.style.opacity = '0';
+      void wy_card.offsetWidth;   // wy_ 强制回流，让下一步过渡生效
+
+      // wy_ 第三步：0.3s 滑回正面
+      wy_card.style.transition = 'transform .3s cubic-bezier(.4, 0, .2, 1), opacity .3s';
+      wy_card.style.transform = 'translateX(0) rotate(0deg)';
+      wy_card.style.opacity = '1';
+
+      // wy_ 300ms 冷却解锁
+      setTimeout(function () { wy_cooling = false; }, 300);
+    }, 300);
+  }
+
+  // wy_ 统一处理位移判断
+  function wy_judge(wy_dx, wy_dy) {
+    if (Math.abs(wy_dy) > Math.abs(wy_dx)) return;   // wy_ 纵向为主，交给页面滚动
+    if (Math.abs(wy_dx) < wy_threshold) return;      // wy_ 阈值：不足 40px 视为误触
+    wy_switch(wy_dx < 0 ? 1 : -1);
+  }
+
+  // wy_ 触摸开始
+  wy_stage.addEventListener('touchstart', function (wy_e) {
+    wy_lastTouchTime = Date.now();
+    var wy_t = wy_e.touches[0];
+    wy_startX = wy_t.clientX;
+    wy_startY = wy_t.clientY;
+  }, { passive: true });
+
+  // wy_ 触摸结束：用 changedTouches[0] 算横向位移
+  wy_stage.addEventListener('touchend', function (wy_e) {
+    var wy_t = wy_e.changedTouches[0];
+    wy_judge(wy_t.clientX - wy_startX, wy_t.clientY - wy_startY);
+  }, { passive: true });
+
+  wy_stage.addEventListener('touchcancel', function () {
+    wy_startX = 0;
+    wy_startY = 0;
+  }, { passive: true });
+
+  // wy_ 桌面鼠标演示：按住左右拖
+  wy_stage.addEventListener('mousedown', function (wy_e) {
+    if (Date.now() - wy_lastTouchTime < 800) return;
+    wy_mouseDown = true;
+    wy_startX = wy_e.clientX;
+    wy_startY = wy_e.clientY;
+  });
+
+  window.addEventListener('mouseup', function (wy_e) {
+    if (!wy_mouseDown) return;
+    wy_mouseDown = false;
+    wy_judge(wy_e.clientX - wy_startX, wy_e.clientY - wy_startY);
+  });
+
+  wy_render();
+})();
+
+
+/* ==================== 任务三 · 图片查看器 ==================== */
+(function () {
+  var wy_stage = document.getElementById('wy_z_stage');
+  var wy_img = document.getElementById('wy_z_img');
+  var wy_badge = document.getElementById('wy_z_badge');
+  var wy_reset = document.getElementById('wy_z_reset');
+
+  // wy_ 当前变换状态
+  var wy_scale = 1;
+  var wy_tx = 0;
+  var wy_ty = 0;
+
+  var wy_minScale = 1;
+  var wy_maxScale = 4;
+
+  // wy_ 手势基准
+  var wy_mode = 'none';       // wy_ none / one / two
+  var wy_startX = 0;
+  var wy_startY = 0;
+  var wy_startTx = 0;
+  var wy_startTy = 0;
+  var wy_startScale = 1;
+  var wy_startDist = 1;
+  var wy_startMidX = 0;
+  var wy_startMidY = 0;
+
+  var wy_lastTapTime = 0;
+  var wy_lastTouchTime = 0;
+  var wy_moved = false;
+  var wy_mouseDown = false;
+
+  // wy_ 两点距离
+  function wy_distance(wy_a, wy_b) {
+    var wy_dx = wy_a.clientX - wy_b.clientX;
+    var wy_dy = wy_a.clientY - wy_b.clientY;
+    return Math.sqrt(wy_dx * wy_dx + wy_dy * wy_dy);
+  }
+
+  function wy_clamp(wy_v, wy_min, wy_max) {
+    return wy_v < wy_min ? wy_min : (wy_v > wy_max ? wy_max : wy_v);
+  }
+
+  // wy_ 可平移范围（缩放后超出容器的部分的一半）
+  function wy_maxOffset() {
+    var wy_maxX = Math.max(0, (wy_img.offsetWidth * wy_scale - wy_stage.clientWidth) / 2);
+    var wy_maxY = Math.max(0, (wy_img.offsetHeight * wy_scale - wy_stage.clientHeight) / 2);
+    return { x: wy_maxX, y: wy_maxY };
+  }
+
+  // wy_ 越界阻尼：超出后只跟手 35%
+  function wy_damp(wy_v, wy_max) {
+    if (wy_v > wy_max) return wy_max + (wy_v - wy_max) * 0.35;
+    if (wy_v < -wy_max) return -wy_max + (wy_v + wy_max) * 0.35;
+    return wy_v;
+  }
+
+  // wy_ 写入 transform
+  function wy_apply(wy_animate) {
+    wy_img.style.transition = wy_animate ? 'transform .25s cubic-bezier(.22, .61, .36, 1)' : 'none';
+    wy_img.style.transform =
+      'translate(' + wy_tx.toFixed(2) + 'px, ' + wy_ty.toFixed(2) + 'px) scale(' + wy_scale.toFixed(4) + ')';
+    wy_badge.textContent = wy_scale.toFixed(1) + '×';
+  }
+
+  // wy_ 收敛边界并回弹
+  function wy_settle() {
+    wy_scale = wy_clamp(wy_scale, wy_minScale, wy_maxScale);
+    var wy_max = wy_maxOffset();
+    wy_tx = wy_clamp(wy_tx, -wy_max.x, wy_max.x);
+    wy_ty = wy_clamp(wy_ty, -wy_max.y, wy_max.y);
+    wy_apply(true);
+  }
+
+  // wy_ 记录双指基准
+  function wy_captureTwo(wy_a, wy_b) {
+    var wy_rect = wy_stage.getBoundingClientRect();
+    wy_mode = 'two';
+    wy_startDist = Math.max(1, wy_distance(wy_a, wy_b));
+    wy_startScale = wy_scale;
+    wy_startTx = wy_tx;
+    wy_startTy = wy_ty;
+    wy_startMidX = (wy_a.clientX + wy_b.clientX) / 2 - (wy_rect.left + wy_rect.width / 2);
+    wy_startMidY = (wy_a.clientY + wy_b.clientY) / 2 - (wy_rect.top + wy_rect.height / 2);
+  }
+
+  wy_stage.addEventListener('touchstart', function (wy_e) {
+    wy_moved = false;
+    wy_lastTouchTime = Date.now();
+
+    if (wy_e.touches.length === 2) {
+      wy_captureTwo(wy_e.touches[0], wy_e.touches[1]);
+      return;
+    }
+    if (wy_e.touches.length === 1) {
+      wy_mode = 'one';
+      wy_startX = wy_e.touches[0].clientX;
+      wy_startY = wy_e.touches[0].clientY;
+      wy_startTx = wy_tx;
+      wy_startTy = wy_ty;
+    }
+  }, { passive: true });
+
+  wy_stage.addEventListener('touchmove', function (wy_e) {
+    wy_e.preventDefault();
+
+    // ---------- wy_ 双指缩放 ----------
+    if (wy_e.touches.length >= 2) {
+      if (wy_mode !== 'two') wy_captureTwo(wy_e.touches[0], wy_e.touches[1]);
+
+      var wy_a = wy_e.touches[0];
+      var wy_b = wy_e.touches[1];
+      var wy_ratio = wy_distance(wy_a, wy_b) / wy_startDist;
+      var wy_targetScale = wy_clamp(wy_startScale * wy_ratio, wy_minScale, wy_maxScale);
+
+      var wy_rect = wy_stage.getBoundingClientRect();
+      var wy_midX = (wy_a.clientX + wy_b.clientX) / 2 - (wy_rect.left + wy_rect.width / 2);
+      var wy_midY = (wy_a.clientY + wy_b.clientY) / 2 - (wy_rect.top + wy_rect.height / 2);
+
+      // wy_ 以两指中点为基准缩放：中点下的像素位置保持不动
+      var wy_k = wy_targetScale / wy_startScale;
+      wy_tx = wy_midX - (wy_startMidX - wy_startTx) * wy_k;
+      wy_ty = wy_midY - (wy_startMidY - wy_startTy) * wy_k;
+      wy_scale = wy_targetScale;
+
+      wy_moved = true;
+      wy_apply(false);
+      return;
+    }
+
+    // ---------- wy_ 单指拖动（放大后可用） ----------
+    if (wy_e.touches.length === 1 && wy_mode === 'one' && wy_scale > 1) {
+      var wy_nx = wy_startTx + (wy_e.touches[0].clientX - wy_startX);
+      var wy_ny = wy_startTy + (wy_e.touches[0].clientY - wy_startY);
+      var wy_max = wy_maxOffset();
+
+      wy_tx = wy_damp(wy_nx, wy_max.x);
+      wy_ty = wy_damp(wy_ny, wy_max.y);
+
+      if (Math.abs(wy_tx - wy_startTx) > 6 || Math.abs(wy_ty - wy_startTy) > 6) wy_moved = true;
+      wy_apply(false);
+    }
+  }, { passive: false });
+
+  wy_stage.addEventListener('touchend', function (wy_e) {
+    // wy_ 双指松开一根：重置单指基准，避免残影跳变
+    if (wy_e.touches.length === 1) {
+      wy_mode = 'one';
+      wy_startX = wy_e.touches[0].clientX;
+      wy_startY = wy_e.touches[0].clientY;
+      wy_startTx = wy_tx;
+      wy_startTy = wy_ty;
+      return;
+    }
+    if (wy_e.touches.length > 0) return;
+
+    var wy_wasSingle = wy_mode === 'one';
+    wy_mode = 'none';
+
+    // wy_ 双击识别：单指、几乎未移动、两次点击间隔 300ms 内
+    if (wy_wasSingle && !wy_moved) {
+      var wy_now = Date.now();
+      if (wy_now - wy_lastTapTime < 300) {
+        wy_doubleTap(wy_e.changedTouches[0].clientX, wy_e.changedTouches[0].clientY);
+        wy_lastTapTime = 0;
+        return;
+      }
+      wy_lastTapTime = wy_now;
+    } else {
+      wy_lastTapTime = 0;
+    }
+
+    wy_settle();
+  }, { passive: true });
+
+  wy_stage.addEventListener('touchcancel', function () {
+    wy_mode = 'none';
+    wy_settle();
+  }, { passive: true });
+
+  // wy_ 双击：1× 与 2× 切换，以点击位置为基准
+  function wy_doubleTap(wy_cx, wy_cy) {
+    if (wy_scale > 1.05) {
+      wy_scale = 1;
+      wy_tx = 0;
+      wy_ty = 0;
+    } else {
+      var wy_rect = wy_stage.getBoundingClientRect();
+      var wy_px = wy_cx - (wy_rect.left + wy_rect.width / 2);
+      var wy_py = wy_cy - (wy_rect.top + wy_rect.height / 2);
+      var wy_target = 2;
+      var wy_k = wy_target / wy_scale;
+
+      wy_tx = wy_px - (wy_px - wy_tx) * wy_k;
+      wy_ty = wy_py - (wy_py - wy_ty) * wy_k;
+      wy_scale = wy_target;
+    }
+    wy_settle();
+  }
+
+  // wy_ 重置
+  wy_reset.addEventListener('click', function () {
+    wy_scale = 1;
+    wy_tx = 0;
+    wy_ty = 0;
+    wy_apply(true);
+  });
+
+  // wy_ 桌面鼠标：双击放大 / 还原
+  wy_stage.addEventListener('dblclick', function (wy_e) {
+    if (Date.now() - wy_lastTouchTime < 800) return;   // wy_ 忽略触摸后模拟的 dblclick
+    wy_doubleTap(wy_e.clientX, wy_e.clientY);
+  });
+
+  // wy_ 桌面鼠标：按住拖动
+  wy_stage.addEventListener('mousedown', function (wy_e) {
+    if (wy_scale <= 1) return;
+    wy_mouseDown = true;
+    wy_startX = wy_e.clientX;
+    wy_startY = wy_e.clientY;
+    wy_startTx = wy_tx;
+    wy_startTy = wy_ty;
+    wy_e.preventDefault();
+  });
+
+  wy_stage.addEventListener('mousemove', function (wy_e) {
+    if (!wy_mouseDown) return;
+    var wy_max = wy_maxOffset();
+    wy_tx = wy_damp(wy_startTx + (wy_e.clientX - wy_startX), wy_max.x);
+    wy_ty = wy_damp(wy_startTy + (wy_e.clientY - wy_startY), wy_max.y);
+    wy_apply(false);
+  });
+
+  window.addEventListener('mouseup', function () {
+    if (!wy_mouseDown) return;
+    wy_mouseDown = false;
+    wy_settle();
+  });
+
+  // wy_ 尺寸变化后重新收敛，缩放状态不丢失
+  window.addEventListener('resize', function () { wy_settle(); });
+  window.addEventListener('orientationchange', function () { setTimeout(wy_settle, 260); });
+
+  wy_apply(false);
+})();
+
+
+/* ==================== 任务四 · 摇一摇 ==================== */
+(function () {
+  // wy_ 菜谱池
+  var wy_dishes = [
+    { name: '红烧狮子头', desc: '肥瘦三七开，砂锅慢炖两小时，汤汁浓郁。', emoji: '🍡' },
+    { name: '清蒸鲈鱼', desc: '姜葱铺底，猛火八分钟，鲜到掉眉毛。', emoji: '🐟' },
+    { name: '宫保鸡丁', desc: '荔枝口的糊辣香，鸡丁滑嫩花生酥脆。', emoji: '🍗' },
+    { name: '糖醋排骨', desc: '酸甜挂汁，收汁到发亮，趁热最好吃。', emoji: '🍖' },
+    { name: '番茄炒蛋', desc: '家常第一名，糖提鲜、蛋要嫩，拌饭一绝。', emoji: '🍅' },
+    { name: '酸辣土豆丝', desc: '刀工切细，白醋分两次下锅，脆爽带劲。', emoji: '🥔' },
+    { name: '小笼包', desc: '皮薄十八褶，先开窗后喝汤。', emoji: '🥟' },
+    { name: '麻辣香锅', desc: '荤素自选，一锅爆香，越吃越上头。', emoji: '🌶️' }
+  ];
+
+  var wy_threshold = 18;      // wy_ 合成加速度阈值
+  var wy_cooling = false;     // wy_ 冷却锁
+  var wy_supported = false;   // wy_ 是否收到传感器数据
+  var wy_detectTimer = null;
+  var wy_permissionAsked = false;
+
+  var wy_status = document.getElementById('wy_s_status');
+  var wy_card = document.getElementById('wy_s_card');
+  var wy_emoji = document.getElementById('wy_s_emoji');
+  var wy_name = document.getElementById('wy_s_name');
+  var wy_desc = document.getElementById('wy_s_desc');
+  var wy_btn = document.getElementById('wy_s_btn');
+  var wy_phone = document.getElementById('wy_s_phone');
+
+  // wy_ 抽一道菜
+  function wy_draw() {
+    if (wy_cooling) return;
+    wy_cooling = true;
+
+    var wy_pick = wy_dishes[Math.floor(Math.random() * wy_dishes.length)];
+    wy_emoji.textContent = wy_pick.emoji;
+    wy_name.textContent = wy_pick.name;
+    wy_desc.textContent = wy_pick.desc;
+
+    // wy_ 重新触发弹出动画
+    wy_card.classList.remove('wy_s_pop');
+    void wy_card.offsetWidth;
+    wy_card.classList.add('wy_s_pop');
+
+    // wy_ 手机图标抖动
+    wy_phone.classList.remove('wy_s_shaking');
+    void wy_phone.offsetWidth;
+    wy_phone.classList.add('wy_s_shaking');
+
+    if (wy_supported) {
+      wy_status.textContent = '抽到了！再摇一摇换一道';
+      wy_status.classList.remove('wy_s_warn');
+    }
+
+    setTimeout(function () { wy_cooling = false; }, 1500);   // wy_ 1.5 秒冷却
+  }
+
+  // wy_ 标记传感器可用
+  function wy_markSupported() {
+    if (wy_supported) return;
+    wy_supported = true;
+    clearTimeout(wy_detectTimer);
+    wy_status.textContent = '摇一摇手机，抽今日菜谱';
+    wy_status.classList.remove('wy_s_warn');
+    wy_btn.textContent = '也可以点我抽一次';
+  }
+
+  // wy_ 不支持时展示降级
+  function wy_showUnsupported() {
+    wy_status.textContent = '当前设备不支持，请用手机打开';
+    wy_status.classList.add('wy_s_warn');
+    wy_btn.textContent = '点我抽一次';
+  }
+
+  // wy_ 监听体感
+  function wy_onMotion(wy_e) {
+    var wy_acc = wy_e.accelerationIncludingGravity;
+    if (!wy_acc || wy_acc.x === null || wy_acc.x === undefined) return;
+
+    wy_markSupported();
+
+    // wy_ 合成加速度 sqrt(x² + y² + z²)
+    var wy_g = Math.sqrt(
+      wy_acc.x * wy_acc.x +
+      wy_acc.y * wy_acc.y +
+      wy_acc.z * wy_acc.z
+    );
+
+    if (wy_g > wy_threshold) wy_draw();
+  }
+
+  var wy_needsPermission = (
+    typeof DeviceMotionEvent !== 'undefined' &&
+    typeof DeviceMotionEvent.requestPermission === 'function'
+  );
+
+  // wy_ 降级按钮
+  wy_btn.addEventListener('click', function () {
+    if (wy_needsPermission && !wy_permissionAsked) {
+      wy_permissionAsked = true;
+      DeviceMotionEvent.requestPermission().then(function (wy_state) {
+        if (wy_state === 'granted') {
+          wy_supported = true;
+          clearTimeout(wy_detectTimer);
+          window.addEventListener('devicemotion', wy_onMotion);
+          wy_status.textContent = '摇一摇手机，抽今日菜谱';
+          wy_status.classList.remove('wy_s_warn');
+          wy_btn.textContent = '也可以点我抽一次';
+        } else {
+          wy_showUnsupported();
+        }
+        wy_draw();
+      }).catch(function () {
+        wy_showUnsupported();
+        wy_draw();
+      });
+      return;
+    }
+    wy_draw();
+  });
+
+  // wy_ 初始化：三种情况
+  if (typeof DeviceMotionEvent === 'undefined') {
+    wy_showUnsupported();                       // wy_ 根本没有该事件
+  } else if (wy_needsPermission) {
+    wy_status.textContent = '需要点一下按钮授权体感权限';
+    wy_btn.textContent = '开启体感并抽一次';    // wy_ iOS 13+ 需用户手势授权
+  } else {
+    window.addEventListener('devicemotion', wy_onMotion);
+    wy_detectTimer = setTimeout(function () {
+      if (!wy_supported) wy_showUnsupported();  // wy_ 3 秒无数据视为不支持
+    }, 3000);
+  }
+})();
+</script>
+</body>
+</html>

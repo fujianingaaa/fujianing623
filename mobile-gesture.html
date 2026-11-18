@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 任务二 · 手势卡片 · 付佳宁 24002120623 -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>手势卡片 · 中华美食</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    padding: 26px 18px 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #e9eefb;
+    background: radial-gradient(circle at 50% 0%, #22314f 0%, #0d1320 52%, #070a10 100%);
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  /* ---------- 头部 ---------- */
+  .wy_head { text-align: center; margin-bottom: 22px; }
+  .wy_head h1 { font-size: 21px; font-weight: 600; letter-spacing: 2px; }
+  .wy_head p { margin-top: 8px; font-size: 12px; color: #7d8ba6; letter-spacing: .6px; }
+
+  /* ---------- 卡片舞台 ---------- */
+  /* wy_ touch-action: pan-y 只接管横向手势，纵向滑动仍交给浏览器滚动页面 */
+  .wy_stage {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    height: 412px;
+    touch-action: pan-y;
+  }
+
+  .wy_card {
+    position: absolute;
+    inset: 0;
+    padding: 30px 26px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    border-radius: 26px;
+    background: linear-gradient(145deg, #f43f5e 0%, #c2410c 100%);
+    box-shadow: 0 26px 56px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .22);
+    will-change: transform, opacity;
+  }
+
+  /* wy_ 卡片上的一层柔光，避免纯色太平 */
+  .wy_card::after {
+    content: "";
+    position: absolute;
+    top: -60px;
+    right: -50px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .16);
+    filter: blur(6px);
+    pointer-events: none;
+  }
+
+  .wy_no {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    font-size: 54px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -3px;
+    color: rgba(255, 255, 255, .18);
+  }
+
+  .wy_emoji {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 92px;
+    filter: drop-shadow(0 12px 26px rgba(0, 0, 0, .35));
+  }
+
+  .wy_tag {
+    align-self: flex-start;
+    padding: 4px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .34);
+    background: rgba(255, 255, 255, .18);
+    font-size: 12px;
+    letter-spacing: 1px;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  .wy_name {
+    margin-top: 12px;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, .28);
+  }
+
+  .wy_desc {
+    margin-top: 8px;
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: rgba(255, 255, 255, .88);
+  }
+
+  /* ---------- 底部页码与圆点 ---------- */
+  .wy_footer { margin-top: 22px; text-align: center; }
+  .wy_page { font-size: 14px; letter-spacing: 1.5px; color: #c3cee2; }
+  .wy_dots { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+  .wy_dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #3a485f;
+    transition: width .25s, background .25s;
+  }
+  .wy_dot.wy_on { width: 22px; border-radius: 4px; background: #fbbf24; }
+
+  /* ---------- 提示气泡 ---------- */
+  .wy_toast {
+    position: fixed;
+    left: 50%;
+    bottom: 92px;
+    transform: translate(-50%, 12px);
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .14);
+    background: rgba(16, 22, 34, .94);
+    color: #f1f5f9;
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s, transform .25s;
+  }
+  .wy_toast.wy_show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ---------- 操作说明（同时让页面可纵向滚动） ---------- */
+  .wy_help {
+    width: 100%;
+    max-width: 360px;
+    margin-top: 30px;
+    padding: 20px 22px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: rgba(255, 255, 255, .04);
+  }
+  .wy_help h3 { font-size: 13px; color: #fbbf24; letter-spacing: 1px; margin-bottom: 12px; }
+  .wy_help li {
+    list-style: none;
+    font-size: 12.5px;
+    line-height: 2;
+    color: #93a2b9;
+    padding-left: 14px;
+    position: relative;
+  }
+  .wy_help li::before { content: "·"; position: absolute; left: 2px; color: #64748b; }
+</style>
+</head>
+<body>
+
+  <header class="wy_head">
+    <h1>中华美食卡片</h1>
+    <p>左右滑动翻页 · 付佳宁 24002120623</p>
+  </header>
+
+  <div class="wy_stage" id="wy_stage">
+    <article class="wy_card" id="wy_card">
+      <span class="wy_no" id="wy_no">01</span>
+      <div class="wy_emoji" id="wy_emoji">🌶️</div>
+      <span class="wy_tag" id="wy_tag">川菜</span>
+      <h2 class="wy_name" id="wy_name">麻婆豆腐</h2>
+      <p class="wy_desc" id="wy_desc">麻辣鲜香烫，一勺红油裹着嫩豆腐，川菜馆里永恒的招牌。</p>
+    </article>
+  </div>
+
+  <div class="wy_footer">
+    <div class="wy_page" id="wy_page">第 1 / 4 张</div>
+    <div class="wy_dots" id="wy_dots"></div>
+  </div>
+
+  <section class="wy_help">
+    <h3>操作说明</h3>
+    <ul>
+      <li>左滑切到下一道菜，右滑回到上一道</li>
+      <li>横向位移不足 40px 视为误触，不会切换</li>
+      <li>滑到第一张继续右滑、最后一张继续左滑会给出提示</li>
+      <li>卡片容器设置了 touch-action: pan-y，上下拖动仍可滚动页面</li>
+      <li>切换带 0.3s 过渡，并有 300ms 冷却，快速连滑不会一次跳两张</li>
+      <li>建议用手机或在浏览器设备模式下打开</li>
+    </ul>
+  </section>
+
+  <div class="wy_toast" id="wy_toast"></div>
+
+<script>
+  /* ========== 任务二 · 手势卡片 · 付佳宁 24002120623 ========== */
+
+  // wy_ 四道菜数据
+  var wy_dishes = [
+    { name: '麻婆豆腐', desc: '麻辣鲜香烫，一勺红油裹着嫩豆腐，川菜馆里永恒的招牌。', tag: '川菜', emoji: '🌶️', from: '#f43f5e', to: '#c2410c' },
+    { name: '东坡肉', desc: '慢火煨足三个小时，肥而不腻、酥而不碎，入口即化。', tag: '浙菜', emoji: '🥩', from: '#b45309', to: '#7c2d12' },
+    { name: '西湖醋鱼', desc: '酸甜适口、鱼肉细嫩，出锅浇一层琥珀色的糖醋汁。', tag: '浙菜', emoji: '🐟', from: '#0891b2', to: '#0f766e' },
+    { name: '北京烤鸭', desc: '皮酥肉嫩、色泽枣红，片好后卷上荷叶饼配甜面酱。', tag: '京菜', emoji: '🦆', from: '#b91c1c', to: '#7f1d1d' }
+  ];
+
+  var wy_index = 0;          // wy_ 当前卡片下标
+  var wy_startX = 0;         // wy_ 按下时的手指横坐标
+  var wy_startY = 0;         // wy_ 按下时的手指纵坐标
+  var wy_cooling = false;    // wy_ 冷却锁，防止快速连滑一次跳两张
+  var wy_threshold = 40;     // wy_ 横向位移阈值（px）
+  var wy_toastTimer = null;
+
+  var wy_card = document.getElementById('wy_card');
+  var wy_no = document.getElementById('wy_no');
+  var wy_emoji = document.getElementById('wy_emoji');
+  var wy_tag = document.getElementById('wy_tag');
+  var wy_name = document.getElementById('wy_name');
+  var wy_desc = document.getElementById('wy_desc');
+  var wy_page = document.getElementById('wy_page');
+  var wy_dots = document.getElementById('wy_dots');
+  var wy_toastEl = document.getElementById('wy_toast');
+  var wy_stage = document.getElementById('wy_stage');
+
+  // wy_ 把数据写进 DOM
+  function wy_render() {
+    var wy_d = wy_dishes[wy_index];
+
+    wy_card.style.background = 'linear-gradient(145deg, ' + wy_d.from + ' 0%, ' + wy_d.to + ' 100%)';
+    wy_no.textContent = wy_index + 1 < 10 ? '0' + (wy_index + 1) : '' + (wy_index + 1);
+    wy_emoji.textContent = wy_d.emoji;
+    wy_tag.textContent = wy_d.tag;
+    wy_name.textContent = wy_d.name;
+    wy_desc.textContent = wy_d.desc;
+    wy_page.textContent = '第 ' + (wy_index + 1) + ' / ' + wy_dishes.length + ' 张';
+
+    // wy_ 同步圆点
+    wy_dots.innerHTML = '';
+    for (var wy_i = 0; wy_i < wy_dishes.length; wy_i++) {
+      var wy_dot = document.createElement('span');
+      wy_dot.className = 'wy_dot' + (wy_i === wy_index ? ' wy_on' : '');
+      wy_dots.appendChild(wy_dot);
+    }
+  }
+
+  // wy_ 轻提示
+  function wy_toast(wy_text) {
+    wy_toastEl.textContent = wy_text;
+    wy_toastEl.classList.add('wy_show');
+    clearTimeout(wy_toastTimer);
+    wy_toastTimer = setTimeout(function () {
+      wy_toastEl.classList.remove('wy_show');
+    }, 1500);
+  }
+
+  // wy_ 切换卡片：wy_dir 为 1 表示下一张，-1 表示上一张
+  function wy_switch(wy_dir) {
+    if (wy_cooling) return;  // wy_ 冷却中直接忽略，避免快速连滑跳两张
+
+    var wy_next = wy_index + wy_dir;
+
+    // wy_ 边界判断
+    if (wy_next < 0) { wy_toast('已经是第一张了'); return; }
+    if (wy_next >= wy_dishes.length) { wy_toast('已经是最后一张了'); return; }
+
+    wy_cooling = true;
+
+    // wy_ 第一步：当前卡片带 0.3s 过渡滑出
+    wy_card.style.transition = 'transform .3s cubic-bezier(.4, 0, .2, 1), opacity .3s';
+    wy_card.style.transform = 'translateX(' + (-wy_dir * 68) + '%) rotate(' + (-wy_dir * 7) + 'deg)';
+    wy_card.style.opacity = '0';
+
+    setTimeout(function () {
+      // wy_ 第二步：换数据，并瞬移到反方向起点
+      wy_index = wy_next;
+      wy_render();
+
+      wy_card.style.transition = 'none';
+      wy_card.style.transform = 'translateX(' + (wy_dir * 68) + '%) rotate(' + (wy_dir * 7) + 'deg)';
+      wy_card.style.opacity = '0';
+      void wy_card.offsetWidth;  // wy_ 强制回流，让下一步的过渡真正生效
+
+      // wy_ 第三步：0.3s 滑回正面
+      wy_card.style.transition = 'transform .3s cubic-bezier(.4, 0, .2, 1), opacity .3s';
+      wy_card.style.transform = 'translateX(0) rotate(0deg)';
+      wy_card.style.opacity = '1';
+
+      // wy_ 300ms 冷却解锁
+      setTimeout(function () { wy_cooling = false; }, 300);
+    }, 300);
+  }
+
+  // wy_ 记录按下位置
+  wy_stage.addEventListener('touchstart', function (wy_e) {
+    var wy_t = wy_e.touches[0];
+    wy_startX = wy_t.clientX;
+    wy_startY = wy_t.clientY;
+  }, { passive: true });
+
+  // wy_ 松手时用 changedTouches[0] 计算横向位移
+  wy_stage.addEventListener('touchend', function (wy_e) {
+    var wy_t = wy_e.changedTouches[0];
+    var wy_dx = wy_t.clientX - wy_startX;
+    var wy_dy = wy_t.clientY - wy_startY;
+
+    // wy_ 纵向位移更大时说明用户在滚页面，不处理
+    if (Math.abs(wy_dy) > Math.abs(wy_dx)) return;
+
+    // wy_ 阈值判断：不足 40px 视为误触
+    if (Math.abs(wy_dx) < wy_threshold) return;
+
+    wy_switch(wy_dx < 0 ? 1 : -1);
+  }, { passive: true });
+
+  // wy_ 手势被系统打断时复位，避免残留状态
+  wy_stage.addEventListener('touchcancel', function () {
+    wy_startX = 0;
+    wy_startY = 0;
+  }, { passive: true });
+
+  wy_render();
+</script>
+</body>
+</html>

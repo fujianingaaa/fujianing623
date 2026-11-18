@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 任务四 · 摇一摇彩蛋 · 付佳宁 24002120623 -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>摇一摇 · 今日菜谱</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    padding: 26px 18px 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #f1f5f9;
+    background:
+      radial-gradient(circle at 50% 4%, rgba(251, 146, 60, .22) 0%, transparent 46%),
+      radial-gradient(circle at 50% 100%, rgba(190, 24, 93, .18) 0%, transparent 55%),
+      #0a0d14;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  .wy_head { text-align: center; margin-bottom: 6px; }
+  .wy_head h1 { font-size: 22px; font-weight: 700; letter-spacing: 2px; }
+  .wy_head p { margin-top: 8px; font-size: 12px; color: #7f8da4; letter-spacing: .6px; }
+
+  /* ---------- 手机图标 ---------- */
+  .wy_phone {
+    margin: 18px 0 4px;
+    font-size: 54px;
+    line-height: 1;
+    filter: drop-shadow(0 10px 22px rgba(251, 146, 60, .32));
+  }
+
+  @keyframes wy_shake {
+    0%, 100% { transform: rotate(0deg) translateX(0); }
+    15% { transform: rotate(-16deg) translateX(-4px); }
+    35% { transform: rotate(14deg) translateX(4px); }
+    55% { transform: rotate(-10deg) translateX(-3px); }
+    75% { transform: rotate(8deg) translateX(2px); }
+  }
+  .wy_shaking { animation: wy_shake .6s ease-in-out; }
+
+  /* ---------- 状态文字 ---------- */
+  .wy_status {
+    margin: 10px 0 20px;
+    min-height: 20px;
+    font-size: 13px;
+    line-height: 1.7;
+    text-align: center;
+    color: #fbbf24;
+    letter-spacing: .3px;
+  }
+  .wy_status.wy_warn { color: #fb7185; }
+
+  /* ---------- 结果卡片 ---------- */
+  .wy_card {
+    width: 100%;
+    max-width: 340px;
+    padding: 34px 26px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: linear-gradient(160deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .03));
+    box-shadow: 0 22px 48px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .12);
+  }
+
+  @keyframes wy_pop {
+    0%   { transform: scale(.86) translateY(12px); opacity: .15; }
+    62%  { transform: scale(1.045) translateY(-5px); opacity: 1; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .wy_pop { animation: wy_pop .45s cubic-bezier(.34, 1.56, .64, 1); }
+
+  .wy_emoji { font-size: 62px; line-height: 1; }
+  .wy_name { margin-top: 16px; font-size: 25px; font-weight: 700; letter-spacing: 1px; }
+  .wy_desc { margin-top: 10px; font-size: 13px; line-height: 1.8; color: #9aa8bd; }
+
+  /* ---------- 降级按钮 ---------- */
+  .wy_btn {
+    margin-top: 22px;
+    padding: 14px 34px;
+    border: none;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 14.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #1a0f05;
+    background: linear-gradient(135deg, #fbbf24, #f97316);
+    box-shadow: 0 12px 26px rgba(249, 115, 22, .34);
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .wy_btn:active { transform: scale(.96); box-shadow: 0 6px 16px rgba(249, 115, 22, .3); }
+
+  /* ---------- 说明 ---------- */
+  .wy_note {
+    width: 100%;
+    max-width: 340px;
+    margin-top: 30px;
+    padding: 20px 22px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: rgba(255, 255, 255, .04);
+  }
+  .wy_note h3 { font-size: 13px; color: #fbbf24; letter-spacing: 1px; margin-bottom: 12px; }
+  .wy_note p { font-size: 12.5px; line-height: 2; color: #93a2b9; }
+  .wy_note p + p { margin-top: 8px; }
+</style>
+</head>
+<body>
+
+  <header class="wy_head">
+    <h1>摇一摇 · 今日菜谱</h1>
+    <p>付佳宁 24002120623</p>
+  </header>
+
+  <div class="wy_phone" id="wy_phone">📱</div>
+  <p class="wy_status" id="wy_status">正在检测设备传感器…</p>
+
+  <div class="wy_card" id="wy_card">
+    <span class="wy_emoji" id="wy_emoji">🍽️</span>
+    <h2 class="wy_name" id="wy_name">今日菜谱</h2>
+    <p class="wy_desc" id="wy_desc">摇一摇手机，看看今天吃什么</p>
+  </div>
+
+  <button class="wy_btn" id="wy_btn" type="button">点我抽一次</button>
+
+  <section class="wy_note">
+    <h3>为什么必须做降级？</h3>
+    <p>① 设备差异大：桌面浏览器、部分安卓机和旧的浏览器根本不提供 devicemotion 事件，或者有事件却拿不到数据。</p>
+    <p>② iOS 限制：iOS 13 以后体感权限必须由用户点击触发申请，直接被拒绝或忽略时传感器完全不可用。</p>
+    <p>③ 只靠传感器，用户在不支持的设备上只会看到空白或报错，功能就等于没有。</p>
+    <p>④ 所以保留「点我抽一次」按钮：传感器只是增强体验，抽菜谱这个核心功能在任何设备上都可用。</p>
+  </section>
+
+<script>
+  /* ========== 任务四 · 摇一摇 · 付佳宁 24002120623 ========== */
+
+  // wy_ 菜谱池
+  var wy_dishes = [
+    { name: '红烧狮子头', desc: '肥瘦三七开，砂锅慢炖两小时，汤汁浓郁。', emoji: '🍡' },
+    { name: '清蒸鲈鱼', desc: '姜葱铺底，猛火八分钟，鲜到掉眉毛。', emoji: '🐟' },
+    { name: '宫保鸡丁', desc: '荔枝口的糊辣香，鸡丁滑嫩花生酥脆。', emoji: '🍗' },
+    { name: '糖醋排骨', desc: '酸甜挂汁，收汁到发亮，趁热最好吃。', emoji: '🍖' },
+    { name: '番茄炒蛋', desc: '家常第一名，糖提鲜、蛋要嫩，拌饭一绝。', emoji: '🍅' },
+    { name: '酸辣土豆丝', desc: '刀工切细，白醋分两次下锅，脆爽带劲。', emoji: '🥔' },
+    { name: '小笼包', desc: '皮薄十八褶，先开窗后喝汤。', emoji: '🥟' },
+    { name: '麻辣香锅', desc: '荤素自选，一锅爆香，越吃越上头。', emoji: '🌶️' }
+  ];
+
+  var wy_threshold = 18;      // wy_ 合成加速度阈值（约 18 m/s²）
+  var wy_cooling = false;     // wy_ 冷却锁
+  var wy_supported = false;   // wy_ 是否成功收到传感器数据
+  var wy_detectTimer = null;  // wy_ 支持性检测定时器
+  var wy_permissionAsked = false;
+
+  var wy_status = document.getElementById('wy_status');
+  var wy_card = document.getElementById('wy_card');
+  var wy_emoji = document.getElementById('wy_emoji');
+  var wy_name = document.getElementById('wy_name');
+  var wy_desc = document.getElementById('wy_desc');
+  var wy_btn = document.getElementById('wy_btn');
+  var wy_phone = document.getElementById('wy_phone');
+
+  // wy_ 抽一道菜并播弹出动画
+  function wy_draw() {
+    if (wy_cooling) return;   // wy_ 1.5 秒冷却，防止一次摇动重复触发
+    wy_cooling = true;
+
+    var wy_pick = wy_dishes[Math.floor(Math.random() * wy_dishes.length)];
+    wy_emoji.textContent = wy_pick.emoji;
+    wy_name.textContent = wy_pick.name;
+    wy_desc.textContent = wy_pick.desc;
+
+    // wy_ 重新触发弹出动画
+    wy_card.classList.remove('wy_pop');
+    void wy_card.offsetWidth;
+    wy_card.classList.add('wy_pop');
+
+    // wy_ 手机图标抖一下
+    wy_phone.classList.remove('wy_shaking');
+    void wy_phone.offsetWidth;
+    wy_phone.classList.add('wy_shaking');
+
+    if (wy_supported) {
+      wy_status.textContent = '抽到了！再摇一摇换一道';
+      wy_status.classList.remove('wy_warn');
+    }
+
+    setTimeout(function () { wy_cooling = false; }, 1500);  // wy_ 1.5 秒冷却结束
+  }
+
+  // wy_ 标记传感器可用
+  function wy_markSupported() {
+    if (wy_supported) return;
+    wy_supported = true;
+    clearTimeout(wy_detectTimer);
+    wy_status.textContent = '摇一摇手机，抽今日菜谱';
+    wy_status.classList.remove('wy_warn');
+    wy_btn.textContent = '也可以点我抽一次';
+  }
+
+  // wy_ 显示不支持提示（降级）
+  function wy_showUnsupported() {
+    wy_status.textContent = '当前设备不支持，请用手机打开';
+    wy_status.classList.add('wy_warn');
+    wy_btn.textContent = '点我抽一次';
+  }
+
+  // wy_ 监听体感数据
+  function wy_onMotion(wy_e) {
+    var wy_acc = wy_e.accelerationIncludingGravity;
+    if (!wy_acc || wy_acc.x === null || wy_acc.x === undefined) return;
+
+    wy_markSupported();
+
+    // wy_ 合成加速度：sqrt(x² + y² + z²)
+    var wy_g = Math.sqrt(
+      wy_acc.x * wy_acc.x +
+      wy_acc.y * wy_acc.y +
+      wy_acc.z * wy_acc.z
+    );
+
+    // wy_ 超过阈值判定为摇动
+    if (wy_g > wy_threshold) wy_draw();
+  }
+
+  // wy_ 是否属于 iOS 13+ 需要用户授权的情况
+  var wy_needsPermission = (
+    typeof DeviceMotionEvent !== 'undefined' &&
+    typeof DeviceMotionEvent.requestPermission === 'function'
+  );
+
+  // wy_ 降级按钮：始终可用
+  wy_btn.addEventListener('click', function () {
+    if (wy_needsPermission && !wy_permissionAsked) {
+      wy_permissionAsked = true;
+      DeviceMotionEvent.requestPermission().then(function (wy_state) {
+        if (wy_state === 'granted') {
+          wy_supported = true;
+          clearTimeout(wy_detectTimer);
+          window.addEventListener('devicemotion', wy_onMotion);
+          wy_status.textContent = '摇一摇手机，抽今日菜谱';
+          wy_status.classList.remove('wy_warn');
+          wy_btn.textContent = '也可以点我抽一次';
+        } else {
+          wy_showUnsupported();   // wy_ 用户拒绝授权 → 走降级
+        }
+        wy_draw();
+      }).catch(function () {
+        wy_showUnsupported();
+        wy_draw();
+      });
+      return;
+    }
+
+    wy_draw();   // wy_ 降级：直接点一次
+  });
+
+  // wy_ 初始化：分三种情况处理
+  if (typeof DeviceMotionEvent === 'undefined') {
+    // wy_ 情况 1：浏览器完全没有这个事件
+    wy_showUnsupported();
+  } else if (wy_needsPermission) {
+    // wy_ 情况 2：iOS 13+ 必须先由用户点击授权
+    wy_status.textContent = '需要点一下按钮授权体感权限';
+    wy_btn.textContent = '开启体感并抽一次';
+  } else {
+    // wy_ 情况 3：直接监听，3 秒内收不到数据就判定为不支持
+    window.addEventListener('devicemotion', wy_onMotion);
+    wy_detectTimer = setTimeout(function () {
+      if (!wy_supported) wy_showUnsupported();
+    }, 3000);
+  }
+</script>
+</body>
+</html>
