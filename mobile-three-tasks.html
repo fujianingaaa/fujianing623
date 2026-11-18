@@ -81,7 +81,10 @@
     justify-content: flex-end;
     overflow: hidden;
     border-radius: 24px;
-    background: linear-gradient(145deg, #f43f5e 0%, #c2410c 100%);
+    background-color: #1a2333;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     box-shadow: 0 22px 48px rgba(0, 0, 0, .52), inset 0 1px 0 rgba(255, 255, 255, .22);
     will-change: transform, opacity;
   }
@@ -106,14 +109,6 @@
     line-height: 1;
     letter-spacing: -3px;
     color: rgba(255, 255, 255, .18);
-  }
-  .wy_g_emoji {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 86px;
-    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .34));
   }
   .wy_g_tag {
     align-self: flex-start;
@@ -287,7 +282,14 @@
   }
   .wy_s_pop { animation: wy_s_pop .45s cubic-bezier(.34, 1.56, .64, 1); }
 
-  .wy_s_emoji { font-size: 58px; line-height: 1; }
+  .wy_s_photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    display: block;
+    object-fit: cover;
+    border-radius: 14px;
+    background: #131b28;
+  }
   .wy_s_name { margin-top: 15px; font-size: 24px; font-weight: 700; letter-spacing: 1px; }
   .wy_s_desc { margin-top: 9px; font-size: 12.5px; line-height: 1.8; color: #9aa8bd; }
 
@@ -365,9 +367,8 @@
     </div>
 
     <div class="wy_g_stage" id="wy_g_stage">
-      <article class="wy_g_card" id="wy_g_card">
+      <article class="wy_g_card" id="wy_g_card" style="background-image: linear-gradient(180deg, rgba(6, 10, 18, .12) 0%, rgba(6, 10, 18, .5) 44%, rgba(6, 10, 18, .9) 100%), url('mobile-imgs/mapo-tofu.jpg');">
         <span class="wy_g_no" id="wy_g_no">01</span>
-        <div class="wy_g_emoji" id="wy_g_emoji">🌶️</div>
         <span class="wy_g_tag" id="wy_g_tag">川菜</span>
         <h3 class="wy_g_name" id="wy_g_name">麻婆豆腐</h3>
         <p class="wy_g_desc" id="wy_g_desc">麻辣鲜香烫，一勺红油裹着嫩豆腐，川菜馆里永恒的招牌。</p>
@@ -436,7 +437,7 @@
     <p class="wy_s_status" id="wy_s_status">正在检测设备传感器…</p>
 
     <div class="wy_s_card" id="wy_s_card">
-      <span class="wy_s_emoji" id="wy_s_emoji">🍽️</span>
+      <img class="wy_s_photo" id="wy_s_photo" src="mobile-imgs/mapo-tofu.jpg" alt="今日菜谱">
       <h3 class="wy_s_name" id="wy_s_name">今日菜谱</h3>
       <p class="wy_s_desc" id="wy_s_desc">摇一摇手机，看看今天吃什么</p>
     </div>
@@ -463,10 +464,10 @@
 (function () {
   // wy_ 四道菜数据
   var wy_dishes = [
-    { name: '麻婆豆腐', desc: '麻辣鲜香烫，一勺红油裹着嫩豆腐，川菜馆里永恒的招牌。', tag: '川菜', emoji: '🌶️', from: '#f43f5e', to: '#c2410c' },
-    { name: '东坡肉', desc: '慢火煨足三个小时，肥而不腻、酥而不碎，入口即化。', tag: '浙菜', emoji: '🥩', from: '#b45309', to: '#7c2d12' },
-    { name: '西湖醋鱼', desc: '酸甜适口、鱼肉细嫩，出锅浇一层琥珀色的糖醋汁。', tag: '浙菜', emoji: '🐟', from: '#0891b2', to: '#0f766e' },
-    { name: '北京烤鸭', desc: '皮酥肉嫩、色泽枣红，片好后卷上荷叶饼配甜面酱。', tag: '京菜', emoji: '🦆', from: '#b91c1c', to: '#7f1d1d' }
+    { name: '麻婆豆腐', desc: '麻辣鲜香烫，一勺红油裹着嫩豆腐，川菜馆里永恒的招牌。', tag: '川菜', img: 'mobile-imgs/mapo-tofu.jpg' },
+    { name: '东坡肉', desc: '慢火煨足三个小时，肥而不腻、酥而不碎，入口即化。', tag: '浙菜', img: 'mobile-imgs/dongpo-pork.jpg' },
+    { name: '西湖醋鱼', desc: '酸甜适口、鱼肉细嫩，出锅浇一层琥珀色的糖醋汁。', tag: '浙菜', img: 'mobile-imgs/westlake-fish.jpg' },
+    { name: '北京烤鸭', desc: '皮酥肉嫩、色泽枣红，片好后卷上荷叶饼配甜面酱。', tag: '京菜', img: 'mobile-imgs/peking-duck.jpg' }
   ];
 
   var wy_index = 0;
@@ -481,7 +482,6 @@
   var wy_stage = document.getElementById('wy_g_stage');
   var wy_card = document.getElementById('wy_g_card');
   var wy_no = document.getElementById('wy_g_no');
-  var wy_emoji = document.getElementById('wy_g_emoji');
   var wy_tag = document.getElementById('wy_g_tag');
   var wy_name = document.getElementById('wy_g_name');
   var wy_desc = document.getElementById('wy_g_desc');
@@ -493,9 +493,8 @@
   function wy_render() {
     var wy_d = wy_dishes[wy_index];
 
-    wy_card.style.background = 'linear-gradient(145deg, ' + wy_d.from + ' 0%, ' + wy_d.to + ' 100%)';
+    wy_card.style.backgroundImage = 'linear-gradient(180deg, rgba(6, 10, 18, .12) 0%, rgba(6, 10, 18, .5) 44%, rgba(6, 10, 18, .9) 100%), url("' + wy_d.img + '")';
     wy_no.textContent = wy_index + 1 < 10 ? '0' + (wy_index + 1) : '' + (wy_index + 1);
-    wy_emoji.textContent = wy_d.emoji;
     wy_tag.textContent = wy_d.tag;
     wy_name.textContent = wy_d.name;
     wy_desc.textContent = wy_d.desc;
@@ -592,6 +591,12 @@
     if (!wy_mouseDown) return;
     wy_mouseDown = false;
     wy_judge(wy_e.clientX - wy_startX, wy_e.clientY - wy_startY);
+  });
+
+  // wy_ 预加载全部菜品图，避免切换时闪白
+  wy_dishes.forEach(function (wy_d) {
+    var wy_preload = new Image();
+    wy_preload.src = wy_d.img;
   });
 
   wy_render();
@@ -848,14 +853,14 @@
 (function () {
   // wy_ 菜谱池
   var wy_dishes = [
-    { name: '红烧狮子头', desc: '肥瘦三七开，砂锅慢炖两小时，汤汁浓郁。', emoji: '🍡' },
-    { name: '清蒸鲈鱼', desc: '姜葱铺底，猛火八分钟，鲜到掉眉毛。', emoji: '🐟' },
-    { name: '宫保鸡丁', desc: '荔枝口的糊辣香，鸡丁滑嫩花生酥脆。', emoji: '🍗' },
-    { name: '糖醋排骨', desc: '酸甜挂汁，收汁到发亮，趁热最好吃。', emoji: '🍖' },
-    { name: '番茄炒蛋', desc: '家常第一名，糖提鲜、蛋要嫩，拌饭一绝。', emoji: '🍅' },
-    { name: '酸辣土豆丝', desc: '刀工切细，白醋分两次下锅，脆爽带劲。', emoji: '🥔' },
-    { name: '小笼包', desc: '皮薄十八褶，先开窗后喝汤。', emoji: '🥟' },
-    { name: '麻辣香锅', desc: '荤素自选，一锅爆香，越吃越上头。', emoji: '🌶️' }
+    { name: '红烧狮子头', desc: '肥瘦三七开，砂锅慢炖两小时，汤汁浓郁。', img: 'mobile-imgs/lion-head.jpg' },
+    { name: '清蒸鲈鱼', desc: '姜葱铺底，猛火八分钟，鲜到掉眉毛。', img: 'mobile-imgs/steamed-bass.jpg' },
+    { name: '宫保鸡丁', desc: '荔枝口的糊辣香，鸡丁滑嫩花生酥脆。', img: 'mobile-imgs/kungpao-chicken.jpg' },
+    { name: '糖醋排骨', desc: '酸甜挂汁，收汁到发亮，趁热最好吃。', img: 'mobile-imgs/sweet-sour-ribs.jpg' },
+    { name: '番茄炒蛋', desc: '家常第一名，糖提鲜、蛋要嫩，拌饭一绝。', img: 'mobile-imgs/tomato-egg.jpg' },
+    { name: '酸辣土豆丝', desc: '刀工切细，白醋分两次下锅，脆爽带劲。', img: 'mobile-imgs/potato-shreds.jpg' },
+    { name: '小笼包', desc: '皮薄十八褶，先开窗后喝汤。', img: 'mobile-imgs/food-zoom.jpg' },
+    { name: '麻辣香锅', desc: '荤素自选，一锅爆香，越吃越上头。', img: 'mobile-imgs/mala-xiangguo.jpg' }
   ];
 
   var wy_threshold = 18;      // wy_ 合成加速度阈值
@@ -866,7 +871,7 @@
 
   var wy_status = document.getElementById('wy_s_status');
   var wy_card = document.getElementById('wy_s_card');
-  var wy_emoji = document.getElementById('wy_s_emoji');
+  var wy_photo = document.getElementById('wy_s_photo');
   var wy_name = document.getElementById('wy_s_name');
   var wy_desc = document.getElementById('wy_s_desc');
   var wy_btn = document.getElementById('wy_s_btn');
@@ -878,7 +883,7 @@
     wy_cooling = true;
 
     var wy_pick = wy_dishes[Math.floor(Math.random() * wy_dishes.length)];
-    wy_emoji.textContent = wy_pick.emoji;
+    wy_photo.src = wy_pick.img;
     wy_name.textContent = wy_pick.name;
     wy_desc.textContent = wy_pick.desc;
 
@@ -976,6 +981,12 @@
       if (!wy_supported) wy_showUnsupported();  // wy_ 3 秒无数据视为不支持
     }, 3000);
   }
+
+  // wy_ 预加载菜谱图，避免抽奖后图片才慢慢加载
+  wy_dishes.forEach(function (wy_d) {
+    var wy_preload = new Image();
+    wy_preload.src = wy_d.img;
+  });
 })();
 </script>
 </body>

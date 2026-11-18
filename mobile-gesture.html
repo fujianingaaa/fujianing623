@@ -45,23 +45,12 @@
     justify-content: flex-end;
     overflow: hidden;
     border-radius: 26px;
-    background: linear-gradient(145deg, #f43f5e 0%, #c2410c 100%);
+    background-color: #1a2333;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     box-shadow: 0 26px 56px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .22);
     will-change: transform, opacity;
-  }
-
-  /* wy_ 卡片上的一层柔光，避免纯色太平 */
-  .wy_card::after {
-    content: "";
-    position: absolute;
-    top: -60px;
-    right: -50px;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, .16);
-    filter: blur(6px);
-    pointer-events: none;
   }
 
   .wy_no {
@@ -73,15 +62,6 @@
     line-height: 1;
     letter-spacing: -3px;
     color: rgba(255, 255, 255, .18);
-  }
-
-  .wy_emoji {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 92px;
-    filter: drop-shadow(0 12px 26px rgba(0, 0, 0, .35));
   }
 
   .wy_tag {
@@ -173,9 +153,8 @@
   </header>
 
   <div class="wy_stage" id="wy_stage">
-    <article class="wy_card" id="wy_card">
+    <article class="wy_card" id="wy_card" style="background-image: linear-gradient(180deg, rgba(6, 10, 18, .12) 0%, rgba(6, 10, 18, .5) 44%, rgba(6, 10, 18, .9) 100%), url('mobile-imgs/mapo-tofu.jpg');">
       <span class="wy_no" id="wy_no">01</span>
-      <div class="wy_emoji" id="wy_emoji">🌶️</div>
       <span class="wy_tag" id="wy_tag">川菜</span>
       <h2 class="wy_name" id="wy_name">麻婆豆腐</h2>
       <p class="wy_desc" id="wy_desc">麻辣鲜香烫，一勺红油裹着嫩豆腐，川菜馆里永恒的招牌。</p>
@@ -206,10 +185,10 @@
 
   // wy_ 四道菜数据
   var wy_dishes = [
-    { name: '麻婆豆腐', desc: '麻辣鲜香烫，一勺红油裹着嫩豆腐，川菜馆里永恒的招牌。', tag: '川菜', emoji: '🌶️', from: '#f43f5e', to: '#c2410c' },
-    { name: '东坡肉', desc: '慢火煨足三个小时，肥而不腻、酥而不碎，入口即化。', tag: '浙菜', emoji: '🥩', from: '#b45309', to: '#7c2d12' },
-    { name: '西湖醋鱼', desc: '酸甜适口、鱼肉细嫩，出锅浇一层琥珀色的糖醋汁。', tag: '浙菜', emoji: '🐟', from: '#0891b2', to: '#0f766e' },
-    { name: '北京烤鸭', desc: '皮酥肉嫩、色泽枣红，片好后卷上荷叶饼配甜面酱。', tag: '京菜', emoji: '🦆', from: '#b91c1c', to: '#7f1d1d' }
+    { name: '麻婆豆腐', desc: '麻辣鲜香烫，一勺红油裹着嫩豆腐，川菜馆里永恒的招牌。', tag: '川菜', img: 'mobile-imgs/mapo-tofu.jpg' },
+    { name: '东坡肉', desc: '慢火煨足三个小时，肥而不腻、酥而不碎，入口即化。', tag: '浙菜', img: 'mobile-imgs/dongpo-pork.jpg' },
+    { name: '西湖醋鱼', desc: '酸甜适口、鱼肉细嫩，出锅浇一层琥珀色的糖醋汁。', tag: '浙菜', img: 'mobile-imgs/westlake-fish.jpg' },
+    { name: '北京烤鸭', desc: '皮酥肉嫩、色泽枣红，片好后卷上荷叶饼配甜面酱。', tag: '京菜', img: 'mobile-imgs/peking-duck.jpg' }
   ];
 
   var wy_index = 0;          // wy_ 当前卡片下标
@@ -221,7 +200,6 @@
 
   var wy_card = document.getElementById('wy_card');
   var wy_no = document.getElementById('wy_no');
-  var wy_emoji = document.getElementById('wy_emoji');
   var wy_tag = document.getElementById('wy_tag');
   var wy_name = document.getElementById('wy_name');
   var wy_desc = document.getElementById('wy_desc');
@@ -234,9 +212,8 @@
   function wy_render() {
     var wy_d = wy_dishes[wy_index];
 
-    wy_card.style.background = 'linear-gradient(145deg, ' + wy_d.from + ' 0%, ' + wy_d.to + ' 100%)';
+    wy_card.style.backgroundImage = 'linear-gradient(180deg, rgba(6, 10, 18, .12) 0%, rgba(6, 10, 18, .5) 44%, rgba(6, 10, 18, .9) 100%), url("' + wy_d.img + '")';
     wy_no.textContent = wy_index + 1 < 10 ? '0' + (wy_index + 1) : '' + (wy_index + 1);
-    wy_emoji.textContent = wy_d.emoji;
     wy_tag.textContent = wy_d.tag;
     wy_name.textContent = wy_d.name;
     wy_desc.textContent = wy_d.desc;
@@ -325,6 +302,12 @@
     wy_startX = 0;
     wy_startY = 0;
   }, { passive: true });
+
+  // wy_ 预加载全部菜品图，避免切换时闪白
+  wy_dishes.forEach(function (wy_d) {
+    var wy_preload = new Image();
+    wy_preload.src = wy_d.img;
+  });
 
   wy_render();
 </script>
