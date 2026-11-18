@@ -4,77 +4,259 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0b1018">
-<title>高级网页设计 · 付佳宁</title>
+<title>付佳宁课堂目录 · 高级网页设计</title>
 <style>
-  /* fjn_ 首页入口：只保留本次移动端三任务作业 */
+  /* fjn_ 课堂目录首页 */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    min-height: 100vh;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    color: #17243a;
+    background: #f2f5fa;
+    line-height: 1.65;
+  }
+  a { color: inherit; }
+
+  .fjn_hero {
+    padding: 20px max(6vw, 20px) 96px;
+    color: #f8fafc;
+    background:
+      radial-gradient(ellipse at 84% 14%, rgba(54, 182, 161, .26), transparent 36%),
+      radial-gradient(ellipse at 10% 100%, rgba(66, 99, 235, .3), transparent 42%),
+      #101b2d;
+  }
+  .fjn_topbar {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 24px;
-    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    color: #e9eefb;
-    background:
-      radial-gradient(circle at 18% 12%, rgba(88, 130, 255, .18), transparent 46%),
-      radial-gradient(circle at 86% 84%, rgba(255, 188, 92, .12), transparent 48%),
-      #0b1018;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: 1120px;
+    margin: 0 auto;
   }
-  .fjn_wrap { width: 100%; max-width: 680px; }
-  .fjn_eyebrow {
-    display: inline-block;
-    font-size: 12px;
-    letter-spacing: .18em;
-    color: #8fa6d8;
-    border: 1px solid rgba(143, 166, 216, .3);
-    border-radius: 999px;
-    padding: 5px 14px;
-    margin-bottom: 22px;
+  .fjn_brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    color: #dbe6f8;
   }
-  h1 { font-size: clamp(28px, 7vw, 40px); line-height: 1.3; letter-spacing: .02em; }
-  h1 span { color: #ffd166; }
-  .fjn_sub { margin-top: 12px; font-size: 14px; line-height: 1.9; color: #93a2c0; }
-  .fjn_card {
-    display: block;
-    margin-top: 30px;
-    padding: 26px 24px;
-    border-radius: 20px;
+  .fjn_mark {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, .22);
+    color: #8ce2d2;
+    font-size: 14px;
+  }
+  .fjn_topbtn {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, .2);
+    color: #e2e8f0;
+    font-size: 13px;
     text-decoration: none;
-    color: inherit;
-    background: rgba(255, 255, 255, .05);
-    border: 1px solid rgba(255, 255, 255, .12);
-    transition: transform .22s ease, border-color .22s ease, background .22s ease;
+    background: rgba(255, 255, 255, .06);
+    transition: background .2s ease;
   }
-  .fjn_card:hover { transform: translateY(-3px); border-color: rgba(255, 209, 102, .42); background: rgba(255, 255, 255, .08); }
-  .fjn_tag {
+  .fjn_topbtn:hover { background: rgba(255, 255, 255, .14); }
+
+  .fjn_main {
+    position: relative;
+    z-index: 2;
+    width: min(1120px, 100%);
+    margin: -58px auto 0;
+    padding: 0 20px 70px;
+  }
+  .fjn_stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    overflow: hidden;
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid #e4e9f1;
+    box-shadow: 0 18px 44px rgba(23, 36, 58, .08);
+  }
+  .fjn_stat { padding: 20px 26px; }
+  .fjn_stat + .fjn_stat { border-left: 1px solid #e4e9f1; }
+  .fjn_stat strong { display: block; font-size: 22px; line-height: 1.25; }
+  .fjn_stat span { display: block; margin-top: 4px; font-size: 12px; color: #64748b; }
+
+  .fjn_sectionhead {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    margin: 52px 0 18px;
+  }
+  .fjn_kicker {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    color: #4263eb;
+  }
+  .fjn_sectionhead h1 {
+    margin-top: 6px;
+    font-size: clamp(24px, 4vw, 32px);
+    letter-spacing: -.02em;
+  }
+  .fjn_note {
+    max-width: 380px;
+    font-size: 13px;
+    color: #64748b;
+    text-align: right;
+  }
+
+  .fjn_grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .fjn_card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    padding: 24px;
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid #e4e9f1;
+    text-decoration: none;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .fjn_card:hover {
+    transform: translateY(-3px);
+    border-color: #b7c4f7;
+    box-shadow: 0 14px 30px rgba(23, 36, 58, .08);
+  }
+  .fjn_card::after {
+    content: "";
+    position: absolute;
+    right: -26px;
+    bottom: -52px;
+    width: 148px;
+    height: 148px;
+    border-radius: 50%;
+    border: 1px solid rgba(66, 99, 235, .12);
+    box-shadow: 0 0 0 22px rgba(66, 99, 235, .035);
+    pointer-events: none;
+  }
+  .fjn_no {
+    display: inline-grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: #edf1ff;
+    color: #3754ce;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .fjn_card h2 { margin: 18px 0 6px; font-size: 19px; }
+  .fjn_card p { font-size: 13px; color: #64748b; max-width: 380px; }
+  .fjn_cta {
     display: inline-block;
+    margin-top: 14px;
     font-size: 12px;
-    color: #ffd166;
-    background: rgba(255, 209, 102, .12);
-    border-radius: 8px;
-    padding: 3px 10px;
+    font-weight: 800;
+    color: #4263eb;
   }
-  .fjn_card h2 { margin-top: 14px; font-size: 20px; letter-spacing: .02em; }
-  .fjn_card p { margin-top: 8px; font-size: 13.5px; line-height: 1.85; color: #93a2c0; }
-  .fjn_go { display: inline-block; margin-top: 16px; font-size: 13px; color: #ffd166; }
-  footer { margin-top: 26px; font-size: 12.5px; color: #6c7a94; text-align: center; }
+  .fjn_badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #168b79;
+    background: #e8f8f4;
+    vertical-align: middle;
+  }
+
+  .fjn_more {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 16px;
+    padding: 17px 20px;
+    border-radius: 15px;
+    border: 1px dashed #cbd5e1;
+    background: rgba(255, 255, 255, .65);
+  }
+  .fjn_more i {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e9eef5;
+    color: #53647c;
+    font-style: normal;
+    font-size: 18px;
+  }
+  .fjn_more strong { display: block; font-size: 13px; }
+  .fjn_more span { font-size: 12px; color: #64748b; }
+
+  .fjn_foot {
+    margin-top: 34px;
+    text-align: center;
+    font-size: 12.5px;
+    color: #94a3b8;
+  }
+
+  @media (max-width: 720px) {
+    .fjn_grid { grid-template-columns: 1fr; }
+    .fjn_stats { grid-template-columns: 1fr; }
+    .fjn_stat + .fjn_stat { border-left: 0; border-top: 1px solid #e4e9f1; }
+    .fjn_sectionhead { flex-direction: column; align-items: flex-start; }
+    .fjn_note { text-align: left; }
+  }
 </style>
 </head>
 <body>
-<div class="fjn_wrap">
-  <span class="fjn_eyebrow">高 级 网 页 设 计 · 课 堂 实 践</span>
-  <h1>付佳宁 · <span>移动端交互三任务</span></h1>
-  <p class="fjn_sub">学号 24002120623<br>手势操作 · 图片查看器 · 设备传感器，三个任务合并为一个页面。</p>
 
-  <a class="fjn_card" href="mobile-three-tasks.html">
-    <span class="fjn_tag">本次作业</span>
-    <h2>移动端交互三任务 · 完整演示</h2>
-    <p>滑动切换菜品卡片、双击 / 双指缩放图片、摇一摇抽菜谱（不支持时自动降级），附两段真实录屏。</p>
-    <span class="fjn_go">打开作业 →</span>
-  </a>
-
-  <footer>24002120623 付佳宁 · 高级网页设计</footer>
+<div class="fjn_hero">
+  <div class="fjn_topbar">
+    <div class="fjn_brand"><span class="fjn_mark">付</span>付佳宁课堂目录</div>
+    <a class="fjn_topbtn" href="mobile-three-tasks.html">打开本次作业 →</a>
+  </div>
 </div>
+
+<div class="fjn_main">
+  <div class="fjn_stats">
+    <div class="fjn_stat"><strong>1</strong><span>个现有网页入口</span></div>
+    <div class="fjn_stat"><strong>1</strong><span>项付佳宁课堂练习</span></div>
+    <div class="fjn_stat"><strong>持续更新</strong><span>其余课堂模块后续增加</span></div>
+  </div>
+
+  <div class="fjn_sectionhead">
+    <div>
+      <div class="fjn_kicker">CLASSROOM · FU JIANING</div>
+      <h1>付佳宁课堂目录</h1>
+    </div>
+    <p class="fjn_note">学号 24002120623 · 点击卡片即可打开练习页面。</p>
+  </div>
+
+  <div class="fjn_grid">
+    <a class="fjn_card" href="mobile-three-tasks.html">
+      <span class="fjn_no">01</span>
+      <h2>移动端交互三任务<span class="fjn_badge">含录屏</span></h2>
+      <p>手势滑动切换菜品卡片、双击与双指缩放查看图片、摇一摇抽菜谱（不支持时自动降级），任务三与任务四各附一段真实录屏演示。</p>
+      <span class="fjn_cta">打开练习页面 ↗</span>
+    </a>
+  </div>
+
+  <div class="fjn_more">
+    <i>+</i>
+    <div>
+      <strong>更多课堂模块，后续持续增加</strong>
+      <span>新练习会继续补充到本目录。</span>
+    </div>
+  </div>
+
+  <div class="fjn_foot">24002120623 付佳宁 · 高级网页设计</div>
+</div>
+
 </body>
 </html>
