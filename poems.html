@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>诗意光影</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-width: 320px;
+      color: #26352f;
+      background: #f3f1eb;
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+    .fjn_header {
+      padding: 46px 24px 36px;
+      text-align: center;
+      background: #193c35;
+      color: #fff;
+    }
+    .fjn_header h1 { font-size: 32px; letter-spacing: 6px; }
+    .fjn_header p { margin-top: 12px; color: #c9d8d1; font-size: 14px; }
+    .fjn_main { width: min(1100px, 100%); margin: 0 auto; padding: 36px 24px 52px; }
+    .fjn_status { padding: 36px 0; text-align: center; color: #687a72; }
+    .fjn_poemGrid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 22px;
+    }
+    .fjn_poemCard {
+      overflow: hidden;
+      border: 1px solid #e1dfd7;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(34, 53, 46, .07);
+    }
+    .fjn_poemImage {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      background: #e5e9e5;
+    }
+    .fjn_poemText { padding: 20px 18px 24px; }
+    .fjn_poemTitle { color: #193c35; font-size: 20px; line-height: 1.5; }
+    .fjn_poemContent { margin-top: 12px; color: #65736d; font-size: 14px; line-height: 1.9; }
+    @media (max-width: 900px) { .fjn_poemGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 520px) {
+      .fjn_header { padding-top: 36px; }
+      .fjn_main { padding: 24px 18px 40px; }
+      .fjn_poemGrid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="fjn_header">
+    <h1>诗意光影</h1>
+    <p>一图一诗，遇见文字里的风景</p>
+  </header>
+
+  <main class="fjn_main">
+    <p class="fjn_status" id="fjn_status">正在读取诗歌数据…</p>
+    <section class="fjn_poemGrid" id="fjn_poemGrid" aria-label="诗歌列表"></section>
+  </main>
+
+  <script>
+    // fjn 从本地 Node 服务器读取 db.json 中的 poems 数据
+    async function fjn_loadPoems() {
+      const fjn_status = document.getElementById('fjn_status');
+      const fjn_grid = document.getElementById('fjn_poemGrid');
+
+      try {
+        const fjn_response = await fetch('/api/poems');
+        if (!fjn_response.ok) throw new Error('数据请求失败');
+        const fjn_poems = await fjn_response.json();
+
+        fjn_status.hidden = true;
+        fjn_poems.forEach(function (fjn_poem) {
+          const fjn_card = document.createElement('article');
+          fjn_card.className = 'fjn_poemCard';
+
+          const fjn_image = document.createElement('img');
+          fjn_image.className = 'fjn_poemImage';
+          fjn_image.src = fjn_poem.pic;
+          fjn_image.alt = fjn_poem.title;
+
+          const fjn_text = document.createElement('div');
+          fjn_text.className = 'fjn_poemText';
+
+          const fjn_title = document.createElement('h2');
+          fjn_title.className = 'fjn_poemTitle';
+          fjn_title.textContent = fjn_poem.title;
+
+          const fjn_content = document.createElement('p');
+          fjn_content.className = 'fjn_poemContent';
+          fjn_content.textContent = fjn_poem.content;
+
+          fjn_text.append(fjn_title, fjn_content);
+          fjn_card.append(fjn_image, fjn_text); // fjn 图片在上，标题和正文在下
+          fjn_grid.appendChild(fjn_card);
+        });
+      } catch (fjn_error) {
+        fjn_status.textContent = '数据加载失败，请确认已启动 db/server.js 后刷新页面。';
+      }
+    }
+
+    fjn_loadPoems();
+  </script>
+</body>
+</html>

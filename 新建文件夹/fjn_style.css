@@ -1,0 +1,287 @@
+/* ============================================================
+   fjn 文学社社图书频道样式表
+   规则：所有类名均以 fjn_ 开头（fjn = 学生姓名缩写）
+   ============================================================ */
+
+/* fjn 全局reset，清除浏览器默认边距 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* fjn 页面全局字体与背景 */
+body {
+    font-family: "Microsoft YaHei", "SimSun", Arial, sans-serif;
+    font-size: 12px;
+    color: #333;
+    background: #fff;
+}
+
+ul, li {
+    list-style: none;
+}
+
+img {
+    border: 0;
+    vertical-align: top;
+}
+
+/* fjn 页面整体容器，居中显示 */
+.fjn_container {
+    width: 1010px;
+    margin: 0 auto;
+    padding: 15px 0 40px;
+}
+
+/* fjn 顶部标题区，底部绿色分隔线 */
+.fjn_header {
+    padding: 10px 0 12px;
+    border-bottom: 2px solid #77a80e;
+}
+
+/* fjn 页面主标题 */
+.fjn_title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    font-family: "Microsoft YaHei", sans-serif;
+}
+
+/* fjn 主体三栏区域，带灰色外边框 */
+.fjn_main {
+    border: 1px solid #e3e3e3;
+    border-top: 0;
+    overflow: hidden;
+}
+
+/* ==================== fjn 左栏：主编推荐 ==================== */
+.fjn_left {
+    float: left;
+    width: 190px;
+    padding: 18px 20px 15px;
+    border-right: 1px solid #e5e5e5;
+}
+
+/* fjn 左栏标题，居中并带下划线 */
+.fjn_leftTitle {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #e0e0e0;
+    letter-spacing: 2px;
+}
+
+/* fjn 主编推荐区域 */
+.fjn_recommend {
+    padding-top: 20px;
+    text-align: left;
+}
+
+/* fjn 推荐封面容器，用于定位力荐角标 */
+.fjn_recommendPic {
+    position: relative;
+    width: 140px;
+    margin: 0 auto;
+}
+
+/* fjn 力荐角标，绿色背景白色文字，定位在封面左上角 */
+.fjn_badge {
+    position: absolute;
+    left: 0;
+    top: 8px;
+    z-index: 2;
+    background: #77a80e;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 3px 8px;
+}
+
+/* fjn 推荐图书封面图片 */
+.fjn_recommendImg {
+    display: block;
+    width: 140px;
+    height: 196px;
+}
+
+/* fjn 推荐图书书名 */
+.fjn_recommendName {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    padding: 16px 0 12px;
+}
+
+/* fjn 推荐图书简介，灰色小字 */
+.fjn_recommendDesc {
+    font-size: 12px;
+    color: #999;
+    line-height: 26px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed #dcdcdc;
+}
+
+/* fjn 左栏底部推荐列表 */
+.fjn_leftList {
+    padding-top: 16px;
+}
+
+/* fjn 左栏底部列表项，带灰色圆点 */
+.fjn_leftItem {
+    font-size: 12px;
+    color: #333;
+    line-height: 26px;
+    padding-left: 12px;
+    position: relative;
+}
+
+/* fjn 用伪元素画列表项前的灰色小圆点 */
+.fjn_leftItem::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #bbb;
+}
+
+/* ==================== fjn 中栏：选项卡与图书 ==================== */
+.fjn_mid {
+    float: left;
+    width: 520px;
+    padding: 0 15px 15px 18px;
+    border-right: 1px solid #e5e5e5;
+}
+
+/* fjn 选项卡导航条 */
+.fjn_tabBar {
+    padding: 14px 0 0 6px;
+}
+
+/* fjn 单个选项卡，默认灰色文字 */
+.fjn_tab {
+    display: inline-block;
+    font-size: 14px;
+    color: #666;
+    padding: 6px 16px 10px;
+    margin-right: 14px;
+    cursor: pointer;
+}
+
+/* fjn 选中选项卡：黑色文字加绿色下划线 */
+.fjn_tab.fjn_active {
+    color: #333;
+    font-weight: bold;
+    border-bottom: 2px solid #77a80e;
+}
+
+/* fjn 图书列表面板 */
+.fjn_panel {
+    padding-top: 10px;
+}
+
+/* fjn 面板隐藏状态，配合JS切换选项卡 */
+.fjn_hide {
+    display: none;
+}
+
+/* fjn 图书列表，清除浮动 */
+.fjn_bookList {
+    overflow: hidden;
+}
+
+/* fjn 单本图书单元，四列排布 */
+.fjn_book {
+    float: left;
+    width: 120px;
+    padding: 12px 0 14px 2px;
+    margin-right: 2px;
+}
+
+/* fjn 图书封面图片 */
+.fjn_cover {
+    display: block;
+    width: 100px;
+    height: 140px;
+}
+
+/* fjn 图书书名 */
+.fjn_name {
+    font-size: 12px;
+    color: #333;
+    font-weight: bold;
+    padding: 12px 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* fjn 图书价格，橙红色 */
+.fjn_price {
+    font-size: 14px;
+    color: #e4393c;
+    font-weight: bold;
+}
+
+/* ==================== fjn 右栏：订阅榜 ==================== */
+.fjn_right {
+    float: left;
+    width: 297px;
+    padding: 22px 22px 15px;
+}
+
+/* fjn 订阅榜标题 */
+.fjn_rankTitle {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* fjn 订阅榜列表 */
+.fjn_rankList {
+    padding-top: 4px;
+}
+
+/* fjn 订阅榜列表项，虚线分隔 */
+.fjn_rankItem {
+    font-size: 12px;
+    color: #333;
+    line-height: 20px;
+    padding: 10px 0;
+    border-bottom: 1px dashed #e0e0e0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* fjn 排名数字小方块，通用样式 */
+.fjn_num {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    font-size: 12px;
+    margin-right: 8px;
+    border: 1px solid #ccc;
+    color: #999;
+    vertical-align: middle;
+}
+
+/* fjn 前三名数字，红色边框红色文字 */
+.fjn_num.fjn_numRed {
+    border-color: #cc1420;
+    color: #cc1420;
+}
+
+/* fjn 列表项鼠标悬停变色 */
+.fjn_rankItem:hover {
+    color: #e4393c;
+    cursor: pointer;
+}
