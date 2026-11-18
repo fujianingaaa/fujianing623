@@ -9,3 +9,7 @@ Thumbs.db
 .trae-html-share-packages/
 _4zip_inspect/
 .git/index.lock
+
+# 依赖包与外部库解压目录
+node_modules/
+swiper/
